@@ -1,0 +1,65 @@
+
+$maybe Entity _ (User _ _ _ super _ _ _ _ _) <- user
+  $if super
+    ^{widgetTopbar (Just (DataR UsersR,[])) (msgr MsgUser) idOverlay Nothing (Just $ DataR $ UserEditR uid)}
+  $else
+    ^{widgetTopbar (Just (DataR UsersR,[])) (msgr MsgUser) idOverlay (Just idDialogDelete) (Just $ DataR $ UserEditR uid)}
+
+<main.responsive.no-padding>
+    
+  $maybe Entity _ (User email _ uname super admin manager _ _ _) <- user
+    <dl.margin>
+      <dt.bold>_{MsgPhoto}
+      <dd.small-margin>
+        <img.circle src=@{DataR $ UserPhotoR uid} loading=lazy alt=_{MsgPhoto} width=48 height=48>
+
+      <dt.bold>_{MsgName}
+      <dd.small-margin>
+        $maybe name <- uname
+          #{name}
+
+      <dt.bold>_{MsgEmail}
+      <dd.small-margin>
+        #{email}
+
+      <dt.bold>_{MsgSuperuser}
+      <dd.small-margin>
+        $if super
+          _{MsgYes}
+        $else
+          _{MsgNo}
+
+      <dt.bold>_{MsgAdministrator}
+      <dd.small-margin>
+        $if admin
+          _{MsgYes}
+        $else
+          _{MsgNo}
+
+      <dt.bold>_{MsgManager}
+      <dd.small-margin>
+        $if manager
+          _{MsgYes}
+        $else
+          _{MsgNo}
+
+    <p.center-align>
+      <a.button.border.transparent href=@{DataR $ UserResetPasswordR uid} role=button>
+        <i>lock_reset
+        _{MsgChangePassword}
+
+^{widgetSnackbar msgs}
+
+<div.overlay ##{idOverlay} data-ui=##{idOverlay}>
+
+<dialog ##{idDialogDelete}>
+  <h5>_{MsgConfirmPlease}
+  <div>_{MsgDeleteAreYouSure}
+  <nav.right-align.no-space>
+    <button.transparent.link data-ui=##{idOverlay}
+      onclick="document.getElementById('#{idDialogDelete}').close()">
+      _{MsgCancel}
+    <form method=post action=@{DataR $ UserDeleR uid} enctype=#{et0}>
+      ^{fw0}
+      <button.primary type=submit>
+        _{MsgDele}

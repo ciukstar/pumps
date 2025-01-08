@@ -1,0 +1,26 @@
+
+^{widgetTopbar Nothing (msgr MsgPumpTypes) idOverlay Nothing Nothing}
+
+<main.responsive.no-padding>
+  $if null types
+    <figure.margin.pading.center-align>
+      <i.extra>folder_open
+      <figcaption>
+        _{MsgNoDataYet}.
+  $else
+    $forall Entity tid (PumpType name) <- types
+      <a.row.padding.wave href=@{DataR $ PumpTypeR tid}>
+
+        <div.content.max>
+          <h6.headline.large-text>
+            #{name}
+
+        <i>arrow_forward_ios
+
+      <hr>
+
+  <a.button.circle.extra.fixed.right.bottom.margin.medium-elevate href=@{DataR PumpTypeNewR}
+    style="z-index:1" onclick="event.stopPropagation()">
+    <i>add
+
+  ^{widgetSnackbar msgs}

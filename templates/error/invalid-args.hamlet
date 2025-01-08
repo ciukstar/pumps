@@ -1,0 +1,16 @@
+
+<header.fixed>
+  <nav.responsive.max>
+    <a.button.circle.transparent href=@{HomeR} aria-label=_{MsgBack}>
+      <i>arrow_back
+
+    <h6.title.max>
+      _{MsgInvalidArguments}
+
+<main>
+  <p.large-text>400
+  <p.medium-text>_{MsgInvalidArguments}
+  <p.medium-text>#{T.intercalate ", " msgs}.
+  <a.button.fill.margin href=@{HomeR} role=button>
+    <i>home
+    _{MsgBackToHomepage}

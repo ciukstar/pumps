@@ -1,0 +1,70 @@
+
+^{widgetTopbar Nothing (m MsgDocumentation) idOverlay Nothing Nothing}
+
+<main.responsive>
+
+  <section>
+    <h2.small>_{MsgAppName}
+    <p>
+      _{MsgDoc000}
+
+      <h3.small>
+        _{MsgOverview}
+      <p.md-typescale-body-large>
+        #{t $ MsgDoc001 (m MsgAppName) (r HomeR)}
+
+  <section>
+    <h3.small>_{MsgUseCaseDiagram}
+    <img src=@{StaticR img_Pumps_UCD_svg} alt=_{MsgUseCaseDiagram} loading=lazy>
+
+
+  <section>
+    <h3.small>_{MsgUserRoles}
+
+  <ul>
+        
+    <li>
+      <div.bold.large-text>_{MsgDataAdministrator}
+      <p>
+        _{MsgDoc007}
+        
+    <li>
+      <div.bold.large-text>_{MsgSuperuser}
+      <dl>
+
+        <dt>_{MsgUsername}
+        <dd>
+          <code>&dollar;YESOD_SUPERUSER_USERNAME
+
+        <dt>_{MsgPassword}
+        <dd>
+          <code>&dollar;YESOD_SUPERUSER_PASSWORD
+
+      <p>_{MsgDoc004}
+
+  <section>
+    <h3.medium>_{MsgBasicEntities}
+    
+  <section>
+    <h4.small>_{MsgEntityRelationshipDiagram}
+     <img src=@{StaticR img_Pumps_ERD_svg} alt=_{MsgEntityRelationshipDiagram} loading=lazy>
+
+  <section>
+    <h4.small>_{MsgParticipant}
+    ...
+    <h4.small>_{MsgSurveySheet}
+    ...
+
+
+  <section>
+    <h3.small>_{MsgSourceCode}
+    <p>
+      #{t $ MsgDoc002 "https://github.com/ciukstar/pumps"}
+
+  <section>
+    <h3.small>_{MsgIssueTracking}
+    <p>
+      #{t $ MsgDoc003 "https://github.com/ciukstar/pumps/issues"}
+
+
+  ^{widgetSnackbar msgs}

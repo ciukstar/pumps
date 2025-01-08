@@ -1,0 +1,28 @@
+
+
+$maybe Entity uid (User email _ uname _ _ _ _ _ _) <- user
+  
+  <button.circle.transparent.no-elevate data-ui=#accountmenutrigger title=#{fromMaybe email uname}>
+    <img src=@{DataR $ UserPhotoR uid} loading=lazy alt=_{MsgPhoto}>
+
+    <menu.left.no-wrap #accountmenutrigger>
+
+      <a.row href=@{DataR $ AccountProfileR uid}>
+        <i>badge
+        <div.max>
+          <div>_{MsgProfile}
+
+      <a.row href=@{DataR $ AccountSettingsR uid}>
+        <i>settings
+        <div.max>
+          <div>_{MsgSettings}
+
+      <a.row href=@{AuthR LogoutR}>
+        <i>logout
+        <div.max>
+          <div>_{MsgSignOut}
+    
+    
+$nothing
+  <a.button.circle.no-elevate href=@{AuthR LoginR} title=_{MsgSignIn}>
+    <i>login

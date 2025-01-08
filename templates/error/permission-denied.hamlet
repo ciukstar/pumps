@@ -1,0 +1,17 @@
+
+^{widgetTopbar (Just (HomeR,[])) (msgr MsgAppName) idOverlay Nothing Nothing}
+
+<main.responsive>
+
+  <h6.small.margin>
+    #{msg}.
+  
+  <a.button href=@{AuthR LoginR} role=button>
+    _{MsgSignIn}
+
+  <p>_{MsgOr}
+
+  <a.link href=@{HomeR}>
+    _{MsgBackToHomepage}
+    
+  ^{widgetSnackbar msgs}

@@ -1,0 +1,13 @@
+
+^{widgetTopbar Nothing (msgr MsgAppName) idOverlay Nothing Nothing}
+
+<main.responsive.no-padding ##{idMain}>
+
+  <h5.intro.small.center-align>
+    _{MsgWelcomeTo} _{MsgAppName}
+         
+        
+
+
+$if not (null msgs)
+  ^{widgetSnackbar msgs}
