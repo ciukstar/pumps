@@ -229,6 +229,18 @@ instance Yesod App where
     isAuthorized (StaticR _) _ = return Authorized   
 
 
+    isAuthorized (DataR (RiskDeleR _)) _ = isAdmin
+    isAuthorized (DataR (RiskEditR _)) _ = isAdmin
+    isAuthorized (DataR RiskNewR) _ = isAdmin
+    isAuthorized (DataR (RiskR _)) _ = isAdmin
+    isAuthorized (DataR RisksR) _ = setUltDestCurrent >> isAdmin
+
+    isAuthorized (DataR (LocationDeleR _)) _ = isAdmin
+    isAuthorized (DataR (LocationEditR _)) _ = isAdmin
+    isAuthorized (DataR LocationNewR) _ = isAdmin
+    isAuthorized (DataR (LocationR _)) _ = isAdmin
+    isAuthorized (DataR LocationsR) _ = setUltDestCurrent >> isAdmin
+
     isAuthorized (DataR (StandardDeleR _)) _ = isAdmin
     isAuthorized (DataR (StandardEditR _)) _ = isAdmin
     isAuthorized (DataR StandardNewR) _ = isAdmin

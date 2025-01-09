@@ -1,0 +1,14 @@
+
+^{widgetTopbar (Just (DataR RisksR,[])) (msgr MsgRisk) idOverlay Nothing Nothing}
+
+<main.responsive>
+
+  <form.margin method=post action=@{DataR RisksR} enctype=#{et} novalidate>
+    ^{fw}
+    <nav.right-align>
+      <a.button.transparent href=@{DataR RisksR}>
+        _{MsgCancel}
+      <button.primary type=submit>
+        _{MsgSave}
+
+  ^{widgetSnackbar msgs}

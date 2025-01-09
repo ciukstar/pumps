@@ -55,6 +55,22 @@ import Handler.Docs ( getDocsR )
 import Handler.Home
     ( getHomeR
     )
+
+import Handler.Risks
+  ( getRisksR, postRisksR
+  , getRiskR, postRiskR
+  , getRiskNewR
+  , getRiskEditR
+  , postRiskDeleR
+  )
+  
+import Handler.Locations 
+  ( getLocationsR, postLocationsR
+  , getLocationR, postLocationR
+  , getLocationNewR
+  , getLocationEditR
+  , postLocationDeleR
+  )
     
 import Handler.Standards
   ( getStandardsR, postStandardsR

@@ -24,7 +24,7 @@ import Model
       )
     , PumpType (PumpType, pumpTypeName)
     , PumpOrientation (PumpOrientation, pumpOrientationName)
-    , PumpClass (PumpClass, pumpClassName), PumpLayout (PumpLayout, pumpLayoutName), Standard (Standard, standardName)
+    , PumpClass (PumpClass, pumpClassName), PumpLayout (PumpLayout, pumpLayoutName), Standard (Standard, standardName), Location (Location, locationName), Risk (Risk, riskName)
     )
     
 import Settings (AppSettings)
@@ -186,7 +186,30 @@ fillDemoEn _appSettings = do
     let standard5 = Standard { standardName = "OEM" }
     stId5 <- insert standard5
 
-    let standard6 = Standard { standardName = "ГОСТ 32601-2013" }
+    let standard6 = Standard { standardName = "GOST 32601-2013" }
     stId6 <- insert standard6
+
+
+    let location1 = Location { locationName = "Indoor" }
+    locId6 <- insert location1
+
+    let location2 = Location { locationName = "Under the canopy" }
+    locId2 <- insert location2
+
+    let location3 = Location { locationName = "Outdoors" }
+    locId3 <- insert location3
+
+    let location4 = Location { locationName = "Other" }
+    locId4 <- insert location4
+
+
+    let risk1 = Risk { riskName = "Flammable" }
+    riskId1 <- insert risk1
+
+    let risk2 = Risk { riskName = "General industrial" }
+    riskId2 <- insert risk2
+
+    let risk3 = Risk { riskName = "With risks" }
+    riskId3 <- insert risk3
     
     return ()

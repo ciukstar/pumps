@@ -18,6 +18,14 @@
       <i>home
       <span>_{MsgHome}
 
+    <a href=@{DataR RisksR} :curr == Just (DataR RisksR):.active>
+      <i>report
+      <span>_{MsgRisks}
+
+    <a href=@{DataR LocationsR} :curr == Just (DataR LocationsR):.active>
+      <i>location_on
+      <span>_{MsgLocations}
+
     <a href=@{DataR StandardsR} :curr == Just (DataR StandardsR):.active>
       <i>square_foot
       <span>_{MsgManufacturingStandards}

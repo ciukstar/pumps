@@ -21,6 +21,18 @@
 
 /data DataR:
 
+    /pump/risks/#RiskId/dele RiskDeleR POST
+    /pump/risks/#RiskId/edit RiskEditR GET
+    /pump/risks/new/form     RiskNewR  GET
+    /pump/risks/#RiskId      RiskR     GET POST
+    /pump/risks              RisksR    GET POST
+
+    /pump/locations/#LocationId/dele LocationDeleR POST
+    /pump/locations/#LocationId/edit LocationEditR GET
+    /pump/locations/new/form         LocationNewR  GET
+    /pump/locations/#LocationId      LocationR     GET POST
+    /pump/locations                  LocationsR    GET POST
+
     /pump/standards/#StandardId/dele StandardDeleR POST
     /pump/standards/#StandardId/edit StandardEditR GET
     /pump/standards/new/form         StandardNewR  GET

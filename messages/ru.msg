@@ -1,3 +1,7 @@
+Risks: Риски
+Risk: Риск
+Locations: Размеще́ния
+Location: Размещение
 ManufacturingStandards: Стандарты изготовления
 ManufacturingStandard: Стандарт изготовления
 PumpLayouts: Компоновки
@@ -100,7 +104,6 @@ End: Конец
 Start: Начало
 LoginForMoreDetailsPlease: Пожалуйста, войдите в систему для более подробной информации
 WelcomeTo: Добро пожаловать на
-Location: Локация
 ChangePassword: Изменить пароль
 AlreadyExists: Уже существует
 No: Нет

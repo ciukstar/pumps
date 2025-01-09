@@ -1,3 +1,7 @@
+Risks: Risks
+Risk: Risk
+Locations: Locations
+Location: Location
 ManufacturingStandards: Manufacturing standards
 ManufacturingStandard: Manufacturing standard
 PumpLayouts: Layouts
@@ -100,7 +104,6 @@ End: End
 Start: Start
 LoginForMoreDetailsPlease: Please login for more details
 WelcomeTo: Welcome to
-Location: Location
 ChangePassword: Change password
 AlreadyExists: Already exists
 No: No
