@@ -15,7 +15,7 @@ ARG YESOD_GOOGLE_CLIENT_ID=$YESOD_GOOGLE_CLIENT_ID
 ARG YESOD_GOOGLE_CLIENT_SECRET=$YESOD_GOOGLE_CLIENT_SECRET
 
 WORKDIR       /opt/pumps
-COPY pumps  /opt/pumps
+COPY pumps    /opt/pumps
 COPY static   /opt/pumps/static
 COPY config   /opt/pumps/config
 COPY demo     /opt/pumps/demo

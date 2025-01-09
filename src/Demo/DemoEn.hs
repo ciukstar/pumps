@@ -16,12 +16,12 @@ import Model
     ( AuthenticationType (UserAuthTypePassword)
     , User
       ( User, userEmail, userPassword, userSuper, userAdmin, userName
-      , userManager, userAuthType, userVerkey, userVerified
+      , userAuthType, userVerkey, userVerified
       )
     , UserPhoto
       ( UserPhoto, userPhotoUser, userPhotoMime, userPhotoAttribution
       , userPhotoPhoto
-      )
+      ), PumpType (PumpType, pumpTypeName)
     )
     
 import Settings (AppSettings)
@@ -46,7 +46,6 @@ fillDemoEn _appSettings = do
                      , userName = Just "Mary Lopez"
                      , userSuper = False
                      , userAdmin = True
-                     , userManager = True
                      , userAuthType = UserAuthTypePassword
                      , userVerkey = Nothing
                      , userVerified = False
@@ -66,7 +65,6 @@ fillDemoEn _appSettings = do
                      , userName = Just "John Johnson"
                      , userSuper = False
                      , userAdmin = False
-                     , userManager = True
                      , userAuthType = UserAuthTypePassword
                      , userVerkey = Nothing
                      , userVerified = False
@@ -86,7 +84,6 @@ fillDemoEn _appSettings = do
                      , userName = Just "Julian Maulsby"
                      , userSuper = False
                      , userAdmin = False
-                     , userManager = False
                      , userAuthType = UserAuthTypePassword
                      , userVerkey = Nothing
                      , userVerified = False
@@ -106,7 +103,6 @@ fillDemoEn _appSettings = do
                      , userName = Just "Valentina Schoen"
                      , userSuper = False
                      , userAdmin = False
-                     , userManager = False
                      , userAuthType = UserAuthTypePassword
                      , userVerkey = Nothing
                      , userVerified = False
@@ -120,84 +116,19 @@ fillDemoEn _appSettings = do
                         , userPhotoAttribution = Just freepik
                         }
 
-    pass5 <- liftIO $ saltPass "jaturnbow"
-    let user5 = User { userEmail = "jaturnbow@xmail.edu"
-                     , userPassword = Just pass5
-                     , userName = Just "Jill A. Turnbow"
-                     , userSuper = False
-                     , userAdmin = False
-                     , userManager = False
-                     , userAuthType = UserAuthTypePassword
-                     , userVerkey = Nothing
-                     , userVerified = False
-                     }
-    uid5 <- insert user5
+    let ptype1 = PumpType { pumpTypeName = "Centrifugal" }
+    ptId1 <- insert ptype1
 
-    liftIO (BS.readFile "demo/user_5.avif") >>= \bs ->
-      insert_ UserPhoto { userPhotoUser = uid5
-                        , userPhotoMime = "image/avif"
-                        , userPhotoPhoto = bs
-                        , userPhotoAttribution = Just freepik
-                        }
+    let ptype2 = PumpType { pumpTypeName = "Gear" }
+    ptId2 <- insert ptype2
 
-    pass6 <- liftIO $ saltPass "cswatkins"
-    let user6 = User { userEmail = "cswatkins@xmail.edu"
-                     , userPassword = Just pass6
-                     , userName = Just "Charles S. Watkins"
-                     , userSuper = False
-                     , userAdmin = False
-                     , userManager = False
-                     , userAuthType = UserAuthTypePassword
-                     , userVerkey = Nothing
-                     , userVerified = False
-                     }
-    uid6 <- insert user6
+    let ptype3 = PumpType { pumpTypeName = "Screw" }
+    ptId3 <- insert ptype3
 
-    liftIO (BS.readFile "demo/user_6.avif") >>= \bs ->
-      insert_ UserPhoto { userPhotoUser = uid6
-                        , userPhotoMime = "image/avif"
-                        , userPhotoPhoto = bs
-                        , userPhotoAttribution = Just freepik
-                        }
+    let ptype4 = PumpType { pumpTypeName = "Hermetic" }
+    ptId4 <- insert ptype4
 
-    pass7 <- liftIO $ saltPass "dlmeyer"
-    let user7 = User { userEmail = "dlmeyer@xmail.edu"
-                     , userPassword = Just pass7
-                     , userName = Just "Donald L. Meyer"
-                     , userSuper = False
-                     , userAdmin = False
-                     , userManager = False
-                     , userAuthType = UserAuthTypePassword
-                     , userVerkey = Nothing
-                     , userVerified = False
-                     }
-    uid7 <- insert user7
-
-    liftIO (BS.readFile "demo/user_7.avif") >>= \bs ->
-      insert_ UserPhoto { userPhotoUser = uid7
-                        , userPhotoMime = "image/avif"
-                        , userPhotoPhoto = bs
-                        , userPhotoAttribution = Just freepik
-                        }
-
-    pass8 <- liftIO $ saltPass "jjbullock"
-    let user8 = User { userEmail = "jjbullock@xmail.edu"
-                     , userPassword = Just pass8
-                     , userName = Just "Jean J. Bullock"
-                     , userSuper = False
-                     , userAdmin = False
-                     , userManager = False
-                     , userAuthType = UserAuthTypePassword
-                     , userVerkey = Nothing
-                     , userVerified = False
-                     }
-    uid8 <- insert user8
-
-    liftIO (BS.readFile "demo/user_8.avif") >>= \bs ->
-      insert_ UserPhoto { userPhotoUser = uid8
-                        , userPhotoMime = "image/avif"
-                        , userPhotoPhoto = bs
-                        , userPhotoAttribution = Just freepik
-                        }
+    let ptype5 = PumpType { pumpTypeName = "Multistage" }
+    ptId5 <- insert ptype5
     
     return ()

@@ -46,7 +46,7 @@ import Foundation
       , MsgNo, MsgAttribution, MsgPassword, MsgSave, MsgAlreadyExists
       , MsgRecordAdded, MsgInvalidFormData, MsgRecordDeleted
       , MsgChangePassword, MsgRecordEdited
-      , MsgSuperuser, MsgManager, MsgPasswordChange, MsgSuperuserCannotBeDeleted
+      , MsgSuperuser, MsgPasswordChange, MsgSuperuserCannotBeDeleted
       , MsgRepeatPassword, MsgPasswordDoesNotMatch, MsgPasswordChanged, MsgClose
       , MsgUploadPhoto, MsgTakePhoto
       )
@@ -58,14 +58,14 @@ import Model
     ( msgSuccess, msgError
     , UserId
     , User
-      ( User, userName, userEmail, userAdmin, userManager
-      , userAuthType, userVerkey, userVerified
+      ( User, userName, userEmail, userAdmin, userAuthType, userVerkey
+      , userVerified
       )
     , UserPhoto (UserPhoto)
     , AuthenticationType (UserAuthTypePassword)
     , EntityField
       ( UserPhotoUser, UserId, UserPhotoAttribution, UserEmail, UserPhotoPhoto
-      , UserPhotoMime, UserName, UserAdmin, UserManager, UserAuthType, UserVerkey
+      , UserPhotoMime, UserName, UserAdmin, UserAuthType, UserVerkey
       , UserVerified, UserPassword
       )
     )
@@ -169,7 +169,7 @@ postUserDeleR uid = do
               return x
 
           case user of
-            Just (Entity _ (User _ _ _ True _ _ _ _ _)) -> do
+            Just (Entity _ (User _ _ _ True _ _ _ _)) -> do
                 addMessageI msgError MsgSuperuserCannotBeDeleted
                 redirect $ DataR $ UserR uid
             _otherwise -> return ()
@@ -224,12 +224,11 @@ postUserR uid = do
     ((fr,fw),et) <- runFormPost $ formUser user
 
     case fr of
-      FormSuccess (User email _ name _ admin manager authType vekey verified,(Just fi,attrib)) -> do
+      FormSuccess (User email _ name _ admin authType vekey verified,(Just fi,attrib)) -> do
           void $ runDB $ update $ \x -> do
             set x [ UserEmail =. val email
                   , UserName =. val name
                   , UserAdmin =. val admin
-                  , UserManager =. val manager
                   , UserAuthType =. val authType
                   , UserVerkey =. val vekey
                   , UserVerified =. val verified
@@ -244,12 +243,11 @@ postUserR uid = do
           addMessageI msgSuccess MsgRecordEdited
           redirect $ DataR $ UserR uid
           
-      FormSuccess (User email _ name _ admin manager authType vekey verified,(Nothing,attrib)) -> do
+      FormSuccess (User email _ name _ admin authType vekey verified,(Nothing,attrib)) -> do
           void $ runDB $ update $ \x -> do
             set x [ UserEmail =. val email
                   , UserName =. val name
                   , UserAdmin =. val admin
-                  , UserManager =. val manager
                   , UserAuthType =. val authType
                   , UserVerkey =. val vekey
                   , UserVerified =. val verified
@@ -362,12 +360,6 @@ formUser user extra = do
         , fsAttrs = []
         } (userAdmin . entityVal <$> user)
 
-    (managerR,managerV) <- mreq checkBoxField FieldSettings
-        { fsLabel = SomeMessage MsgManager
-        , fsTooltip = Nothing, fsId = Nothing, fsName = Nothing
-        , fsAttrs = []
-        } (userManager . entityVal <$> user)
-
     let authTypeR = pure $ maybe UserAuthTypePassword (userAuthType . entityVal) user
     let verkeyR = pure $ userVerkey . entityVal =<< user
     let verifiedR = pure $ maybe False (userVerified . entityVal) user
@@ -391,7 +383,7 @@ formUser user extra = do
         , fsAttrs = []
         } (Just attrib)
 
-    let r = (,) <$> ( User <$> emailR <*> pure Nothing <*> nameR <*> pure False <*> adminR <*> managerR
+    let r = (,) <$> ( User <$> emailR <*> pure Nothing <*> nameR <*> pure False <*> adminR
                       <*> authTypeR <*> verkeyR <*> verifiedR
                     )
                 <*> ((,) <$> photoR <*> attribR)

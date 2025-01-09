@@ -19,7 +19,7 @@
     
   <div.padding.page.active>
 
-    $maybe Entity uid (User email _ uname _ admin manager _ _ _) <- user
+    $maybe Entity uid (User email _ uname _ admin _ _ _) <- user
               
       <dl>
         <dt.bold>_{MsgPhoto}
@@ -37,13 +37,6 @@
         <dt.bold>_{MsgAdministrator}
         <dd.small-margin>
           $if admin
-            _{MsgYes}
-          $else
-            _{MsgNo}
-            
-        <dt.bold>_{MsgManager}
-        <dd.small-margin>
-          $if manager
             _{MsgYes}
           $else
             _{MsgNo}

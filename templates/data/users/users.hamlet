@@ -2,7 +2,7 @@
 ^{widgetTopbar Nothing (msgr MsgUsers) idOverlay Nothing Nothing}
 
 <main.responsive.no-padding>
-  $forall Entity uid (User email _ uname super admin manager _ _ _) <- users
+  $forall Entity uid (User email _ uname super admin _ _ _) <- users
     <a.row.padding.wave href=@{DataR $ UserR uid}>
 
       <img.circle src=@{DataR $ UserPhotoR uid} alt=_{MsgPhoto} loading=lazy>
@@ -19,8 +19,6 @@
             <span.upper>_{MsgSuperuser}
           $elseif admin
             <span.upper>_{MsgAdministrator}
-          $elseif manager
-            <span.upper>_{MsgManager}
           $else
             <span.lower>_{MsgUser}
         

@@ -230,9 +230,11 @@ instance Yesod App where
 
 
     
+    isAuthorized (DataR (PumpTypeDeleR _)) _ = isAdmin
+    isAuthorized (DataR (PumpTypeEditR _)) _ = isAdmin
     isAuthorized (DataR PumpTypeNewR) _ = isAdmin
     isAuthorized (DataR (PumpTypeR _)) _ = isAdmin
-    isAuthorized (DataR PumpTypesR) _ = isAdmin
+    isAuthorized (DataR PumpTypesR) _ = setUltDestCurrent >> isAdmin
     
     isAuthorized (DataR (AccountProfileR uid)) _ = isAuthenticatedSelf uid
     isAuthorized (DataR (AccountSettingsR uid)) _ = isAuthenticatedSelf uid
@@ -384,7 +386,6 @@ instance YesodAuth App where
                                                       , userName = name
                                                       , userSuper = False
                                                       , userAdmin = False
-                                                      , userManager = False
                                                       , userAuthType = UserAuthTypeGoogle
                                                       , userVerkey = Nothing
                                                       , userVerified = True
@@ -473,25 +474,9 @@ isAdmin :: Handler AuthResult
 isAdmin = do
     user <- maybeAuth
     case user of
-        Just (Entity _ (User _ _ _ True _ _ _ _ _)) -> return Authorized
-        Just (Entity _ (User _ _ _ _ True _ _ _ _)) -> return Authorized
-        Just (Entity _ (User _ _ _ _ False _ _ _ _)) -> unauthorizedI MsgAccessDeniedAdminsOnly
-        Nothing -> unauthorizedI MsgSignInToAccessPlease
-
-
-isManagerSelfOrAdmin :: UserId -> Handler AuthResult
-isManagerSelfOrAdmin uid = do
-    user <- maybeAuth
-    case user of
-        Just (Entity _ (User _ _ _ True _ _ _ _ _)) -> return Authorized
-        Just (Entity _ (User _ _ _ _ True _ _ _ _)) -> return Authorized
-        
-        Just (Entity uid' (User _ _ _ _ _ True _ _ _))
-            | uid == uid' -> return Authorized
-            | otherwise -> unauthorizedI MsgAnotherAccountAccessProhibited
-            
-        Just (Entity _ (User _ _ _ False False False _ _ _)) -> unauthorizedI MsgAccessDeniedManagerOrAdminOnly
-            
+        Just (Entity _ (User _ _ _ True _ _ _ _)) -> return Authorized
+        Just (Entity _ (User _ _ _ _ True _ _ _)) -> return Authorized
+        Just (Entity _ (User _ _ _ _ False _ _ _)) -> unauthorizedI MsgAccessDeniedAdminsOnly
         Nothing -> unauthorizedI MsgSignInToAccessPlease
 
 
@@ -499,17 +484,8 @@ isAdministrator :: Handler Bool
 isAdministrator = do
     user <- maybeAuth
     case user of
-        Just (Entity _ (User _ _ _ _ True _ _ _ _)) -> return True
-        Just (Entity _ (User _ _ _ _ False _ _ _ _)) -> return False
-        Nothing -> return False
-    
-
-isEventManager :: Handler Bool
-isEventManager = do
-    user <- maybeAuth
-    case user of
-        Just (Entity _ (User _ _ _ _ _ True _ _ _)) -> return True
-        Just (Entity _ (User _ _ _ _ _ False _ _ _)) -> return False
+        Just (Entity _ (User _ _ _ _ True _ _ _)) -> return True
+        Just (Entity _ (User _ _ _ _ False _ _ _)) -> return False
         Nothing -> return False
 
 

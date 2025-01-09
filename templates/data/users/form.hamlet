@@ -45,7 +45,7 @@ $forall v <- [emailV, nameV]
   ^{md3widget v}
 
 
-$forall v <- [adminV, managerV]
+$forall v <- [adminV]
   ^{md3switchWidget v}
       
 

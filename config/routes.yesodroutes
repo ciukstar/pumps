@@ -21,12 +21,14 @@
 
 /data DataR:
 
-    /pump/types/new/form    PumpTypeNewR GET
-    /pump/types/#PumpTypeId PumpTypeR    GET
-    /pump/types             PumpTypesR   GET
+    /pump/types/#PumpTypeId/dele PumpTypeDeleR POST
+    /pump/types/#PumpTypeId/edit PumpTypeEditR GET
+    /pump/types/new/form         PumpTypeNewR  GET
+    /pump/types/#PumpTypeId      PumpTypeR     GET POST
+    /pump/types                  PumpTypesR    GET POST
 
-    /accounts/#UserId/settings                   AccountSettingsR        GET
-    /accounts/#UserId/profile                    AccountProfileR         GET
+    /accounts/#UserId/settings AccountSettingsR GET
+    /accounts/#UserId/profile  AccountProfileR  GET
     
     /users/#UserId/pwd  UserResetPasswordR GET POST
     /users/#UserId/dele UserDeleR          POST

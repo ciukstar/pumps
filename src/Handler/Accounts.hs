@@ -25,7 +25,7 @@ import Foundation
       )
     , AppMessage
       ( MsgUserAccount, MsgYes, MsgNo, MsgSettings, MsgProfile, MsgName
-      , MsgAdministrator, MsgManager, MsgPhoto, MsgTheme
+      , MsgAdministrator, MsgPhoto, MsgTheme
       )
     )
 

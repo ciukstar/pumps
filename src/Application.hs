@@ -57,9 +57,11 @@ import Handler.Home
     )
 
 import Handler.PumpTypes
-    ( getPumpTypesR
-    , getPumpTypeR
+    ( getPumpTypesR, postPumpTypesR
+    , getPumpTypeR, postPumpTypeR
     , getPumpTypeNewR
+    , getPumpTypeEditR
+    , postPumpTypeDeleR
     )
 
 import Handler.Accounts
@@ -130,7 +132,6 @@ makeFoundation appSettings = do
                      , userName = Just "Super User"
                      , userSuper = True
                      , userAdmin = True
-                     , userManager = True
                      , userAuthType = UserAuthTypePassword
                      , userVerkey = Nothing
                      , userVerified = False

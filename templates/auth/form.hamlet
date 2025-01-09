@@ -4,7 +4,7 @@
   <span>_{MsgDemoUserAccounts}
   <i>arrow_drop_down
   <menu #demoAccountsMenu>
-    $forall Entity uid (User email _ uname super admin manager _ _ _) <- users
+    $forall Entity uid (User email _ uname super admin _ _ _) <- users
       $with pass <- maybe "" (TE.decodeUtf8 . localPart) (emailAddress $ TE.encodeUtf8 email)
         <a.row href=# onclick="document.getElementById('#{idInputUsername}').value = '#{email}';document.getElementById('#{idInputPassword}').value = '#{pass}';document.getElementById('idButtonAccountsMenu').click()">
           <img.circle.small src=@{DataR $ UserPhotoR uid} loading=lazy alt=_{MsgPhoto}>
@@ -18,8 +18,6 @@
                 <p.upper>_{MsgSuperuser}
               $elseif admin
                 <p.upper>_{MsgAdministrator}
-              $elseif manager
-                <p.upper>_{MsgManager}
               $else
                 <p.lower>_{MsgUser}
 

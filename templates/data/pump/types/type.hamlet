@@ -1,0 +1,27 @@
+
+^{widgetTopbar (Just (DataR PumpTypesR,[])) (msgr MsgPumpType) idOverlay (Just idDialogDelete) (Just $ DataR $ PumpTypeEditR tid)}
+
+<main.responsive>
+    
+  $maybe Entity _ (PumpType name) <- typ
+    <dl.margin>
+
+      <dt.bold>_{MsgName}
+      <dd.small-margin>
+        #{name}
+
+^{widgetSnackbar msgs}
+
+<div.overlay ##{idOverlay} data-ui=##{idOverlay}>
+
+<dialog ##{idDialogDelete}>
+  <h5>_{MsgConfirmPlease}
+  <div>_{MsgDeleteAreYouSure}
+  <nav.right-align.no-space>
+    <button.transparent.link data-ui=##{idOverlay}
+      onclick="document.getElementById('#{idDialogDelete}').close()">
+      _{MsgCancel}
+    <form method=post action=@{DataR $ PumpTypeDeleR tid} enctype=#{et0}>
+      ^{fw0}
+      <button.primary type=submit>
+        _{MsgDele}

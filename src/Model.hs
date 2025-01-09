@@ -19,8 +19,8 @@
 module Model where
 
 import ClassyPrelude.Yesod
-    ( Typeable, Text, mkMigrate, mkPersist, persistFileWith
-    , share, sqlSettings, String
+    ( Typeable, Text, String, mkMigrate, mkPersist, persistFileWith
+    , share, sqlSettings
     )
 
 import Control.Applicative (pure) 
