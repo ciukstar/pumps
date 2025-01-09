@@ -2,12 +2,12 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-module Handler.PumpTypes
-  ( getPumpTypesR, postPumpTypesR
-  , getPumpTypeR, postPumpTypeR
-  , getPumpTypeNewR
-  , getPumpTypeEditR
-  , postPumpTypeDeleR
+module Handler.PumpClasses
+  ( getPumpClassesR, postPumpClassesR
+  , getPumpClassR, postPumpClassR
+  , getPumpClassNewR
+  , getPumpClassEditR
+  , postPumpClassDeleR
   ) where
 
 
@@ -22,9 +22,9 @@ import Database.Persist (Entity(Entity), insert_, replace, delete)
 import Foundation
     ( Handler, Form, widgetSnackbar, widgetTopbar
     , Route (DataR)
-    , DataR (PumpTypeNewR, PumpTypeR, PumpTypesR, PumpTypeEditR, PumpTypeDeleR)
+    , DataR (PumpClassNewR, PumpClassR, PumpClassesR, PumpClassEditR, PumpClassDeleR)
     , AppMessage
-      ( MsgPumpType, MsgPumpTypes, MsgNoDataYet, MsgName, MsgAlreadyExists
+      ( MsgPumpClass, MsgPumpClasses, MsgNoDataYet, MsgName, MsgAlreadyExists
       , MsgSave, MsgCancel, MsgRecordAdded, MsgDeleteAreYouSure, MsgDele
       , MsgConfirmPlease, MsgRecordEdited, MsgRecordDeleted, MsgInvalidFormData
       )
@@ -34,8 +34,8 @@ import Material3 (md3widget)
 
 import Model
     ( msgSuccess, msgError
-    , PumpType(PumpType, pumpTypeName), PumpTypeId
-    , EntityField (PumpTypeName, PumpTypeId)
+    , PumpClass(PumpClass, pumpClassName), PumpClassId
+    , EntityField (PumpClassName, PumpClassId) 
     )
 
 import Settings (widgetFile)
@@ -55,126 +55,126 @@ import Yesod.Form.Types
 import Yesod.Persist.Core (YesodPersist(runDB))
 
 
-postPumpTypeDeleR :: PumpTypeId -> Handler Html
-postPumpTypeDeleR tid = do
-    ((fr,_),_) <- runFormPost formPumpTypeDelete
+postPumpClassDeleR :: PumpClassId -> Handler Html
+postPumpClassDeleR cid = do
+    ((fr,_),_) <- runFormPost formPumpClassDelete
     case fr of
       FormSuccess () -> do
-          runDB $ delete tid
+          runDB $ delete cid
           addMessageI msgSuccess MsgRecordDeleted
-          redirect $ DataR PumpTypesR
+          redirect $ DataR PumpClassesR
       _otherwise -> do
           addMessageI msgError MsgInvalidFormData
-          redirect $ DataR PumpTypesR
+          redirect $ DataR PumpClassesR
 
 
-postPumpTypeR :: PumpTypeId -> Handler Html
-postPumpTypeR tid = do
-    typ <- runDB $ selectOne $ do
-        x <- from $ table @PumpType
-        where_ $ x ^. PumpTypeId ==. val tid
+postPumpClassR :: PumpClassId -> Handler Html
+postPumpClassR cid = do
+    clazz <- runDB $ selectOne $ do
+        x <- from $ table @PumpClass
+        where_ $ x ^. PumpClassId ==. val cid
         return x
     
-    ((fr,fw),et) <- runFormPost $ formPumpType typ
+    ((fr,fw),et) <- runFormPost $ formPumpClass clazz
     case fr of
       FormSuccess r -> do
-          runDB $ replace tid r
+          runDB $ replace cid r
           addMessageI msgSuccess MsgRecordEdited
-          redirect $ DataR $ PumpTypeR tid
+          redirect $ DataR $ PumpClassR cid
       _otherwise -> do
           msgr <- getMessageRender
           msgs <- getMessages
           defaultLayout $ do
-              setTitleI MsgPumpType
+              setTitleI MsgPumpClass
               idOverlay <- newIdent
-              $(widgetFile "data/pump/types/edit")
+              $(widgetFile "data/pump/classes/edit")
 
 
-getPumpTypeEditR :: PumpTypeId -> Handler Html
-getPumpTypeEditR tid = do
-    typ <- runDB $ selectOne $ do
-        x <- from $ table @PumpType
-        where_ $ x ^. PumpTypeId ==. val tid
+getPumpClassEditR :: PumpClassId -> Handler Html
+getPumpClassEditR cid = do
+    clazz <- runDB $ selectOne $ do
+        x <- from $ table @PumpClass
+        where_ $ x ^. PumpClassId ==. val cid
         return x
     
-    (fw,et) <- generateFormPost $ formPumpType typ
+    (fw,et) <- generateFormPost $ formPumpClass clazz
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgPumpType
+        setTitleI MsgPumpClass
         idOverlay <- newIdent
-        $(widgetFile "data/pump/types/edit")
+        $(widgetFile "data/pump/classes/edit")
 
 
-getPumpTypeR :: PumpTypeId -> Handler Html
-getPumpTypeR tid = do
-    typ <- runDB $ selectOne $ do
-        x <- from $ table @PumpType
-        where_ $ x ^. PumpTypeId ==. val tid
+getPumpClassR :: PumpClassId -> Handler Html
+getPumpClassR cid = do
+    clazz <- runDB $ selectOne $ do
+        x <- from $ table @PumpClass
+        where_ $ x ^. PumpClassId ==. val cid
         return x
 
-    (fw0,et0) <- generateFormPost formPumpTypeDelete
+    (fw0,et0) <- generateFormPost formPumpClassDelete
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgPumpType
+        setTitleI MsgPumpClass
         idOverlay <- newIdent
         idDialogDelete <- newIdent
-        $(widgetFile "data/pump/types/type")
+        $(widgetFile "data/pump/classes/class")
 
 
-postPumpTypesR :: Handler Html
-postPumpTypesR = do
-    ((fr,fw),et) <- runFormPost $ formPumpType Nothing
+postPumpClassesR :: Handler Html
+postPumpClassesR = do
+    ((fr,fw),et) <- runFormPost $ formPumpClass Nothing
     case fr of
       FormSuccess r -> do
           runDB $ insert_ r
           addMessageI msgSuccess MsgRecordAdded
-          redirect $ DataR PumpTypesR
+          redirect $ DataR PumpClassesR
       _otherwise -> do
           msgr <- getMessageRender
           msgs <- getMessages
           defaultLayout $ do
-              setTitleI MsgPumpTypes
+              setTitleI MsgPumpClasses
               idOverlay <- newIdent
-              $(widgetFile "data/pump/types/new")
+              $(widgetFile "data/pump/classes/new")
 
 
-getPumpTypeNewR :: Handler Html
-getPumpTypeNewR = do
-    (fw,et) <- generateFormPost $ formPumpType Nothing
-
-    msgr <- getMessageRender
-    msgs <- getMessages
-    defaultLayout $ do
-        setTitleI MsgPumpTypes
-        idOverlay <- newIdent
-        $(widgetFile "data/pump/types/new")
-
-
-getPumpTypesR :: Handler Html
-getPumpTypesR = do
-    types <- runDB $ select $ from $ table @PumpType
+getPumpClassNewR :: Handler Html
+getPumpClassNewR = do
+    (fw,et) <- generateFormPost $ formPumpClass Nothing
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgPumpTypes
+        setTitleI MsgPumpClasses
         idOverlay <- newIdent
-        $(widgetFile "data/pump/types/types")
+        $(widgetFile "data/pump/classes/new")
 
 
-formPumpType :: Maybe (Entity PumpType) -> Form PumpType
-formPumpType typ extra = do
+getPumpClassesR :: Handler Html
+getPumpClassesR = do
+    classes <- runDB $ select $ from $ table @PumpClass
+
+    msgr <- getMessageRender
+    msgs <- getMessages
+    defaultLayout $ do
+        setTitleI MsgPumpClasses
+        idOverlay <- newIdent
+        $(widgetFile "data/pump/classes/classes")
+
+
+formPumpClass :: Maybe (Entity PumpClass) -> Form PumpClass
+formPumpClass typ extra = do
 
     (nameR,nameV) <- mreq uniqueNameField FieldSettings
         { fsLabel = SomeMessage MsgName
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (pumpTypeName . entityVal <$> typ) 
+        } (pumpClassName . entityVal <$> typ) 
 
-    return ( PumpType <$> nameR
+    return ( PumpClass <$> nameR
            , [whamlet|
                      ^{extra}
                      ^{md3widget nameV}
@@ -187,8 +187,8 @@ formPumpType typ extra = do
       uniqueName :: Text -> Handler (Either AppMessage Text)
       uniqueName name = do
           x <- runDB $ selectOne $ do
-              x <- from $ table @PumpType
-              where_ $ x ^. PumpTypeName ==. val name
+              x <- from $ table @PumpClass
+              where_ $ x ^. PumpClassName ==. val name
               return x
           return $ case x of
             Nothing -> Right name
@@ -198,5 +198,5 @@ formPumpType typ extra = do
                                    | otherwise -> Left MsgAlreadyExists
 
 
-formPumpTypeDelete :: Form ()
-formPumpTypeDelete extra = return (pure (),[whamlet|^{extra}|])
+formPumpClassDelete :: Form ()
+formPumpClassDelete extra = return (pure (),[whamlet|^{extra}|])

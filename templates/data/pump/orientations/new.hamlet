@@ -1,0 +1,14 @@
+
+^{widgetTopbar (Just (DataR PumpOrientationsR,[])) (msgr MsgPumpOrientation) idOverlay Nothing Nothing}
+
+<main.responsive>
+
+  <form.margin method=post action=@{DataR PumpOrientationsR} enctype=#{et} novalidate>
+    ^{fw}
+    <nav.right-align>
+      <a.button.transparent href=@{DataR PumpOrientationsR}>
+        _{MsgCancel}
+      <button.primary type=submit>
+        _{MsgSave}
+
+  ^{widgetSnackbar msgs}

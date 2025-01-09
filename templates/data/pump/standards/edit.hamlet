@@ -1,0 +1,14 @@
+
+^{widgetTopbar (Just (DataR $ StandardR sid,[])) (msgr MsgManufacturingStandard) idOverlay Nothing Nothing}
+
+<main.responsive>
+
+  <form.margin method=post action=@{DataR $ StandardR sid} enctype=#{et} novalidate>
+    ^{fw}
+    <nav.right-align>
+      <a.button.transparent href=@{DataR $ StandardR sid}>
+        _{MsgCancel}
+      <button.primary type=submit>
+        _{MsgSave}
+
+  ^{widgetSnackbar msgs}

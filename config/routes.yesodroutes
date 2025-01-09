@@ -21,6 +21,30 @@
 
 /data DataR:
 
+    /pump/standards/#StandardId/dele StandardDeleR POST
+    /pump/standards/#StandardId/edit StandardEditR GET
+    /pump/standards/new/form         StandardNewR  GET
+    /pump/standards/#StandardId      StandardR     GET POST
+    /pump/standards                  StandardsR    GET POST
+
+    /pump/layouts/#PumpLayoutId/dele PumpLayoutDeleR POST
+    /pump/layouts/#PumpLayoutId/edit PumpLayoutEditR GET
+    /pump/layouts/new/form           PumpLayoutNewR  GET
+    /pump/layouts/#PumpLayoutId      PumpLayoutR     GET POST
+    /pump/layouts                    PumpLayoutsR    GET POST
+
+    /pump/classes/#PumpClassId/dele PumpClassDeleR POST
+    /pump/classes/#PumpClassId/edit PumpClassEditR GET
+    /pump/classes/new/form          PumpClassNewR  GET
+    /pump/classes/#PumpClassId      PumpClassR     GET POST
+    /pump/classes                   PumpClassesR   GET POST
+
+    /pump/orientation/#PumpOrientationId/dele PumpOrientationDeleR POST
+    /pump/orientation/#PumpOrientationId/edit PumpOrientationEditR GET
+    /pump/orientation/new/form                PumpOrientationNewR  GET
+    /pump/orientation/#PumpOrientationId      PumpOrientationR     GET POST
+    /pump/orientations                        PumpOrientationsR    GET POST
+
     /pump/types/#PumpTypeId/dele PumpTypeDeleR POST
     /pump/types/#PumpTypeId/edit PumpTypeEditR GET
     /pump/types/new/form         PumpTypeNewR  GET

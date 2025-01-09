@@ -2,12 +2,12 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-module Handler.PumpTypes
-  ( getPumpTypesR, postPumpTypesR
-  , getPumpTypeR, postPumpTypeR
-  , getPumpTypeNewR
-  , getPumpTypeEditR
-  , postPumpTypeDeleR
+module Handler.PumpOrientations
+  ( getPumpOrientationsR, postPumpOrientationsR
+  , getPumpOrientationR, postPumpOrientationR
+  , getPumpOrientationNewR
+  , getPumpOrientationEditR
+  , postPumpOrientationDeleR
   ) where
 
 
@@ -22,9 +22,12 @@ import Database.Persist (Entity(Entity), insert_, replace, delete)
 import Foundation
     ( Handler, Form, widgetSnackbar, widgetTopbar
     , Route (DataR)
-    , DataR (PumpTypeNewR, PumpTypeR, PumpTypesR, PumpTypeEditR, PumpTypeDeleR)
+    , DataR
+      ( PumpOrientationNewR, PumpOrientationR, PumpOrientationsR, PumpOrientationEditR
+      , PumpOrientationDeleR
+      )
     , AppMessage
-      ( MsgPumpType, MsgPumpTypes, MsgNoDataYet, MsgName, MsgAlreadyExists
+      ( MsgPumpOrientation, MsgPumpOrientations, MsgNoDataYet, MsgName, MsgAlreadyExists
       , MsgSave, MsgCancel, MsgRecordAdded, MsgDeleteAreYouSure, MsgDele
       , MsgConfirmPlease, MsgRecordEdited, MsgRecordDeleted, MsgInvalidFormData
       )
@@ -34,8 +37,8 @@ import Material3 (md3widget)
 
 import Model
     ( msgSuccess, msgError
-    , PumpType(PumpType, pumpTypeName), PumpTypeId
-    , EntityField (PumpTypeName, PumpTypeId)
+    , PumpOrientation(PumpOrientation, pumpOrientationName), PumpOrientationId
+    , EntityField (PumpOrientationName, PumpOrientationId)
     )
 
 import Settings (widgetFile)
@@ -55,126 +58,126 @@ import Yesod.Form.Types
 import Yesod.Persist.Core (YesodPersist(runDB))
 
 
-postPumpTypeDeleR :: PumpTypeId -> Handler Html
-postPumpTypeDeleR tid = do
-    ((fr,_),_) <- runFormPost formPumpTypeDelete
+postPumpOrientationDeleR :: PumpOrientationId -> Handler Html
+postPumpOrientationDeleR oid = do
+    ((fr,_),_) <- runFormPost formPumpOrientationDelete
     case fr of
       FormSuccess () -> do
-          runDB $ delete tid
+          runDB $ delete oid
           addMessageI msgSuccess MsgRecordDeleted
-          redirect $ DataR PumpTypesR
+          redirect $ DataR PumpOrientationsR
       _otherwise -> do
           addMessageI msgError MsgInvalidFormData
-          redirect $ DataR PumpTypesR
+          redirect $ DataR PumpOrientationsR
 
 
-postPumpTypeR :: PumpTypeId -> Handler Html
-postPumpTypeR tid = do
+postPumpOrientationR :: PumpOrientationId -> Handler Html
+postPumpOrientationR oid = do
     typ <- runDB $ selectOne $ do
-        x <- from $ table @PumpType
-        where_ $ x ^. PumpTypeId ==. val tid
+        x <- from $ table @PumpOrientation
+        where_ $ x ^. PumpOrientationId ==. val oid
         return x
     
-    ((fr,fw),et) <- runFormPost $ formPumpType typ
+    ((fr,fw),et) <- runFormPost $ formPumpOrientation typ
     case fr of
       FormSuccess r -> do
-          runDB $ replace tid r
+          runDB $ replace oid r
           addMessageI msgSuccess MsgRecordEdited
-          redirect $ DataR $ PumpTypeR tid
+          redirect $ DataR $ PumpOrientationR oid
       _otherwise -> do
           msgr <- getMessageRender
           msgs <- getMessages
           defaultLayout $ do
-              setTitleI MsgPumpType
+              setTitleI MsgPumpOrientation
               idOverlay <- newIdent
-              $(widgetFile "data/pump/types/edit")
+              $(widgetFile "data/pump/orientations/edit")
 
 
-getPumpTypeEditR :: PumpTypeId -> Handler Html
-getPumpTypeEditR tid = do
+getPumpOrientationEditR :: PumpOrientationId -> Handler Html
+getPumpOrientationEditR oid = do
     typ <- runDB $ selectOne $ do
-        x <- from $ table @PumpType
-        where_ $ x ^. PumpTypeId ==. val tid
+        x <- from $ table @PumpOrientation
+        where_ $ x ^. PumpOrientationId ==. val oid
         return x
     
-    (fw,et) <- generateFormPost $ formPumpType typ
+    (fw,et) <- generateFormPost $ formPumpOrientation typ
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgPumpType
+        setTitleI MsgPumpOrientation
         idOverlay <- newIdent
-        $(widgetFile "data/pump/types/edit")
+        $(widgetFile "data/pump/orientations/edit")
 
 
-getPumpTypeR :: PumpTypeId -> Handler Html
-getPumpTypeR tid = do
+getPumpOrientationR :: PumpOrientationId -> Handler Html
+getPumpOrientationR oid = do
     typ <- runDB $ selectOne $ do
-        x <- from $ table @PumpType
-        where_ $ x ^. PumpTypeId ==. val tid
+        x <- from $ table @PumpOrientation
+        where_ $ x ^. PumpOrientationId ==. val oid
         return x
 
-    (fw0,et0) <- generateFormPost formPumpTypeDelete
+    (fw0,et0) <- generateFormPost formPumpOrientationDelete
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgPumpType
+        setTitleI MsgPumpOrientation
         idOverlay <- newIdent
         idDialogDelete <- newIdent
-        $(widgetFile "data/pump/types/type")
+        $(widgetFile "data/pump/orientations/orientation")
 
 
-postPumpTypesR :: Handler Html
-postPumpTypesR = do
-    ((fr,fw),et) <- runFormPost $ formPumpType Nothing
+postPumpOrientationsR :: Handler Html
+postPumpOrientationsR = do
+    ((fr,fw),et) <- runFormPost $ formPumpOrientation Nothing
     case fr of
       FormSuccess r -> do
           runDB $ insert_ r
           addMessageI msgSuccess MsgRecordAdded
-          redirect $ DataR PumpTypesR
+          redirect $ DataR PumpOrientationsR
       _otherwise -> do
           msgr <- getMessageRender
           msgs <- getMessages
           defaultLayout $ do
-              setTitleI MsgPumpTypes
+              setTitleI MsgPumpOrientations
               idOverlay <- newIdent
-              $(widgetFile "data/pump/types/new")
+              $(widgetFile "data/pump/orientations/new")
 
 
-getPumpTypeNewR :: Handler Html
-getPumpTypeNewR = do
-    (fw,et) <- generateFormPost $ formPumpType Nothing
-
-    msgr <- getMessageRender
-    msgs <- getMessages
-    defaultLayout $ do
-        setTitleI MsgPumpTypes
-        idOverlay <- newIdent
-        $(widgetFile "data/pump/types/new")
-
-
-getPumpTypesR :: Handler Html
-getPumpTypesR = do
-    types <- runDB $ select $ from $ table @PumpType
+getPumpOrientationNewR :: Handler Html
+getPumpOrientationNewR = do
+    (fw,et) <- generateFormPost $ formPumpOrientation Nothing
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgPumpTypes
+        setTitleI MsgPumpOrientations
         idOverlay <- newIdent
-        $(widgetFile "data/pump/types/types")
+        $(widgetFile "data/pump/orientations/new")
 
 
-formPumpType :: Maybe (Entity PumpType) -> Form PumpType
-formPumpType typ extra = do
+getPumpOrientationsR :: Handler Html
+getPumpOrientationsR = do
+    orientations <- runDB $ select $ from $ table @PumpOrientation
+
+    msgr <- getMessageRender
+    msgs <- getMessages
+    defaultLayout $ do
+        setTitleI MsgPumpOrientations
+        idOverlay <- newIdent
+        $(widgetFile "data/pump/orientations/orientations")
+
+
+formPumpOrientation :: Maybe (Entity PumpOrientation) -> Form PumpOrientation
+formPumpOrientation typ extra = do
 
     (nameR,nameV) <- mreq uniqueNameField FieldSettings
         { fsLabel = SomeMessage MsgName
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (pumpTypeName . entityVal <$> typ) 
+        } (pumpOrientationName . entityVal <$> typ) 
 
-    return ( PumpType <$> nameR
+    return ( PumpOrientation <$> nameR
            , [whamlet|
                      ^{extra}
                      ^{md3widget nameV}
@@ -187,8 +190,8 @@ formPumpType typ extra = do
       uniqueName :: Text -> Handler (Either AppMessage Text)
       uniqueName name = do
           x <- runDB $ selectOne $ do
-              x <- from $ table @PumpType
-              where_ $ x ^. PumpTypeName ==. val name
+              x <- from $ table @PumpOrientation
+              where_ $ x ^. PumpOrientationName ==. val name
               return x
           return $ case x of
             Nothing -> Right name
@@ -198,5 +201,5 @@ formPumpType typ extra = do
                                    | otherwise -> Left MsgAlreadyExists
 
 
-formPumpTypeDelete :: Form ()
-formPumpTypeDelete extra = return (pure (),[whamlet|^{extra}|])
+formPumpOrientationDelete :: Form ()
+formPumpOrientationDelete extra = return (pure (),[whamlet|^{extra}|])

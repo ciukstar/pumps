@@ -55,6 +55,37 @@ import Handler.Docs ( getDocsR )
 import Handler.Home
     ( getHomeR
     )
+    
+import Handler.Standards
+  ( getStandardsR, postStandardsR
+  , getStandardR, postStandardR
+  , getStandardNewR
+  , getStandardEditR
+  , postStandardDeleR
+  ) 
+import Handler.PumpLayouts
+  ( getPumpLayoutsR, postPumpLayoutsR
+  , getPumpLayoutR, postPumpLayoutR
+  , getPumpLayoutNewR
+  , getPumpLayoutEditR
+  , postPumpLayoutDeleR
+  )
+  
+import Handler.PumpClasses
+  ( getPumpClassesR, postPumpClassesR
+  , getPumpClassR, postPumpClassR
+  , getPumpClassNewR
+  , getPumpClassEditR
+  , postPumpClassDeleR
+  ) 
+
+import Handler.PumpOrientations
+    ( getPumpOrientationsR, postPumpOrientationsR
+    , getPumpOrientationR, postPumpOrientationR
+    , getPumpOrientationNewR
+    , getPumpOrientationEditR
+    , postPumpOrientationDeleR
+    )
 
 import Handler.PumpTypes
     ( getPumpTypesR, postPumpTypesR

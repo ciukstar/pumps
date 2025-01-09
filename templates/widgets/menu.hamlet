@@ -18,6 +18,22 @@
       <i>home
       <span>_{MsgHome}
 
+    <a href=@{DataR StandardsR} :curr == Just (DataR StandardsR):.active>
+      <i>square_foot
+      <span>_{MsgManufacturingStandards}
+
+    <a href=@{DataR PumpLayoutsR} :curr == Just (DataR PumpLayoutsR):.active>
+      <i>align_justify_space_around
+      <span>_{MsgPumpLayouts}
+
+    <a href=@{DataR PumpClassesR} :curr == Just (DataR PumpClassesR):.active>
+      <i>communities
+      <span>_{MsgPumpClasses}
+
+    <a href=@{DataR PumpOrientationsR} :curr == Just (DataR PumpOrientationsR):.active>
+      <i>responsive_layout
+      <span>_{MsgPumpOrientations}
+
     <a href=@{DataR PumpTypesR} :curr == Just (DataR PumpTypesR):.active>
       <i>water_pump
       <span>_{MsgPumpTypes}

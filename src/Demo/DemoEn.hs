@@ -21,7 +21,10 @@ import Model
     , UserPhoto
       ( UserPhoto, userPhotoUser, userPhotoMime, userPhotoAttribution
       , userPhotoPhoto
-      ), PumpType (PumpType, pumpTypeName)
+      )
+    , PumpType (PumpType, pumpTypeName)
+    , PumpOrientation (PumpOrientation, pumpOrientationName)
+    , PumpClass (PumpClass, pumpClassName), PumpLayout (PumpLayout, pumpLayoutName), Standard (Standard, standardName)
     )
     
 import Settings (AppSettings)
@@ -130,5 +133,60 @@ fillDemoEn _appSettings = do
 
     let ptype5 = PumpType { pumpTypeName = "Multistage" }
     ptId5 <- insert ptype5
+    
+
+    let porient1 = PumpOrientation { pumpOrientationName = "Horizontal" }
+    poId1 <- insert porient1    
+
+    let porient2 = PumpOrientation { pumpOrientationName = "Vertical" }
+    poId2 <- insert porient2
+    
+
+    let pclass1 = PumpClass { pumpClassName = "OH1" }
+    pcId1 <- insert pclass1
+
+    let pclass2 = PumpClass { pumpClassName = "OH2" }
+    pcId2 <- insert pclass2
+
+    let pclass3 = PumpClass { pumpClassName = "BB1" }
+    pcId3 <- insert pclass3
+
+    let pclass4 = PumpClass { pumpClassName = "BB3" }
+    pcId4 <- insert pclass4
+
+    let pclass5 = PumpClass { pumpClassName = "VS" }
+    pcId5 <- insert pclass5
+    
+
+    let playout1 = PumpLayout { pumpLayoutName = "Pump only" }
+    plId1 <- insert playout1
+
+    let playout2 = PumpLayout { pumpLayoutName = "Without coupling" }
+    plId2 <- insert playout2
+
+    let playout3 = PumpLayout { pumpLayoutName = "With coupling assembly" }
+    plId3 <- insert playout3
+
+    let playout4 = PumpLayout { pumpLayoutName = "Without frame" }
+    plId4 <- insert playout4
+
+
+    let standard1 = Standard { standardName = "API 610" }
+    stId1 <- insert standard1
+
+    let standard2 = Standard { standardName = "API 685" }
+    stId2 <- insert standard2
+
+    let standard3 = Standard { standardName = "ISO" }
+    stId3 <- insert standard3
+
+    let standard4 = Standard { standardName = "Gost" }
+    stId4 <- insert standard4
+
+    let standard5 = Standard { standardName = "OEM" }
+    stId5 <- insert standard5
+
+    let standard6 = Standard { standardName = "ГОСТ 32601-2013" }
+    stId6 <- insert standard6
     
     return ()

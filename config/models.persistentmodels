@@ -24,9 +24,9 @@ Location
     UniqueLocation name
     
 
-ManufacturingStandard
+Standard
     name Text
-    UniqueManufacturingStandard name
+    UniqueStandard name
 
 PumpLayout
     name Text

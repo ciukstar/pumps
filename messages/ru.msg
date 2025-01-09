@@ -1,3 +1,11 @@
+ManufacturingStandards: Стандарты изготовления
+ManufacturingStandard: Стандарт изготовления
+PumpLayouts: Компоновки
+PumpLayout: Компоновка
+PumpClasses: Классы насосов
+PumpClass: Класс насоса
+PumpOrientations: Ориентации насоса
+PumpOrientation: Ориентация насоса
 NoDataYet: Данных пока нет
 PumpTypes: Типы насосов
 PumpType: Тип насоса

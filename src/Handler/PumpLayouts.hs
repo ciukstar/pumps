@@ -2,12 +2,12 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-module Handler.PumpTypes
-  ( getPumpTypesR, postPumpTypesR
-  , getPumpTypeR, postPumpTypeR
-  , getPumpTypeNewR
-  , getPumpTypeEditR
-  , postPumpTypeDeleR
+module Handler.PumpLayouts
+  ( getPumpLayoutsR, postPumpLayoutsR
+  , getPumpLayoutR, postPumpLayoutR
+  , getPumpLayoutNewR
+  , getPumpLayoutEditR
+  , postPumpLayoutDeleR
   ) where
 
 
@@ -22,9 +22,9 @@ import Database.Persist (Entity(Entity), insert_, replace, delete)
 import Foundation
     ( Handler, Form, widgetSnackbar, widgetTopbar
     , Route (DataR)
-    , DataR (PumpTypeNewR, PumpTypeR, PumpTypesR, PumpTypeEditR, PumpTypeDeleR)
+    , DataR (PumpLayoutNewR, PumpLayoutR, PumpLayoutsR, PumpLayoutEditR, PumpLayoutDeleR)
     , AppMessage
-      ( MsgPumpType, MsgPumpTypes, MsgNoDataYet, MsgName, MsgAlreadyExists
+      ( MsgPumpLayout, MsgPumpLayouts, MsgNoDataYet, MsgName, MsgAlreadyExists
       , MsgSave, MsgCancel, MsgRecordAdded, MsgDeleteAreYouSure, MsgDele
       , MsgConfirmPlease, MsgRecordEdited, MsgRecordDeleted, MsgInvalidFormData
       )
@@ -34,8 +34,8 @@ import Material3 (md3widget)
 
 import Model
     ( msgSuccess, msgError
-    , PumpType(PumpType, pumpTypeName), PumpTypeId
-    , EntityField (PumpTypeName, PumpTypeId)
+    , PumpLayout(PumpLayout, pumpLayoutName), PumpLayoutId
+    , EntityField (PumpLayoutName, PumpLayoutId)
     )
 
 import Settings (widgetFile)
@@ -55,126 +55,126 @@ import Yesod.Form.Types
 import Yesod.Persist.Core (YesodPersist(runDB))
 
 
-postPumpTypeDeleR :: PumpTypeId -> Handler Html
-postPumpTypeDeleR tid = do
-    ((fr,_),_) <- runFormPost formPumpTypeDelete
+postPumpLayoutDeleR :: PumpLayoutId -> Handler Html
+postPumpLayoutDeleR lid = do
+    ((fr,_),_) <- runFormPost formPumpLayoutDelete
     case fr of
       FormSuccess () -> do
-          runDB $ delete tid
+          runDB $ delete lid
           addMessageI msgSuccess MsgRecordDeleted
-          redirect $ DataR PumpTypesR
+          redirect $ DataR PumpLayoutsR
       _otherwise -> do
           addMessageI msgError MsgInvalidFormData
-          redirect $ DataR PumpTypesR
+          redirect $ DataR PumpLayoutsR
 
 
-postPumpTypeR :: PumpTypeId -> Handler Html
-postPumpTypeR tid = do
-    typ <- runDB $ selectOne $ do
-        x <- from $ table @PumpType
-        where_ $ x ^. PumpTypeId ==. val tid
+postPumpLayoutR :: PumpLayoutId -> Handler Html
+postPumpLayoutR lid = do
+    layout <- runDB $ selectOne $ do
+        x <- from $ table @PumpLayout
+        where_ $ x ^. PumpLayoutId ==. val lid
         return x
     
-    ((fr,fw),et) <- runFormPost $ formPumpType typ
+    ((fr,fw),et) <- runFormPost $ formPumpLayout layout
     case fr of
       FormSuccess r -> do
-          runDB $ replace tid r
+          runDB $ replace lid r
           addMessageI msgSuccess MsgRecordEdited
-          redirect $ DataR $ PumpTypeR tid
+          redirect $ DataR $ PumpLayoutR lid
       _otherwise -> do
           msgr <- getMessageRender
           msgs <- getMessages
           defaultLayout $ do
-              setTitleI MsgPumpType
+              setTitleI MsgPumpLayout
               idOverlay <- newIdent
-              $(widgetFile "data/pump/types/edit")
+              $(widgetFile "data/pump/layouts/edit")
 
 
-getPumpTypeEditR :: PumpTypeId -> Handler Html
-getPumpTypeEditR tid = do
-    typ <- runDB $ selectOne $ do
-        x <- from $ table @PumpType
-        where_ $ x ^. PumpTypeId ==. val tid
+getPumpLayoutEditR :: PumpLayoutId -> Handler Html
+getPumpLayoutEditR lid = do
+    layout <- runDB $ selectOne $ do
+        x <- from $ table @PumpLayout
+        where_ $ x ^. PumpLayoutId ==. val lid
         return x
     
-    (fw,et) <- generateFormPost $ formPumpType typ
+    (fw,et) <- generateFormPost $ formPumpLayout layout
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgPumpType
+        setTitleI MsgPumpLayout
         idOverlay <- newIdent
-        $(widgetFile "data/pump/types/edit")
+        $(widgetFile "data/pump/layouts/edit")
 
 
-getPumpTypeR :: PumpTypeId -> Handler Html
-getPumpTypeR tid = do
-    typ <- runDB $ selectOne $ do
-        x <- from $ table @PumpType
-        where_ $ x ^. PumpTypeId ==. val tid
+getPumpLayoutR :: PumpLayoutId -> Handler Html
+getPumpLayoutR lid = do
+    layout <- runDB $ selectOne $ do
+        x <- from $ table @PumpLayout
+        where_ $ x ^. PumpLayoutId ==. val lid
         return x
 
-    (fw0,et0) <- generateFormPost formPumpTypeDelete
+    (fw0,et0) <- generateFormPost formPumpLayoutDelete
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgPumpType
+        setTitleI MsgPumpLayout
         idOverlay <- newIdent
         idDialogDelete <- newIdent
-        $(widgetFile "data/pump/types/type")
+        $(widgetFile "data/pump/layouts/layout")
 
 
-postPumpTypesR :: Handler Html
-postPumpTypesR = do
-    ((fr,fw),et) <- runFormPost $ formPumpType Nothing
+postPumpLayoutsR :: Handler Html
+postPumpLayoutsR = do
+    ((fr,fw),et) <- runFormPost $ formPumpLayout Nothing
     case fr of
       FormSuccess r -> do
           runDB $ insert_ r
           addMessageI msgSuccess MsgRecordAdded
-          redirect $ DataR PumpTypesR
+          redirect $ DataR PumpLayoutsR
       _otherwise -> do
           msgr <- getMessageRender
           msgs <- getMessages
           defaultLayout $ do
-              setTitleI MsgPumpTypes
+              setTitleI MsgPumpLayouts
               idOverlay <- newIdent
-              $(widgetFile "data/pump/types/new")
+              $(widgetFile "data/pump/layouts/new")
 
 
-getPumpTypeNewR :: Handler Html
-getPumpTypeNewR = do
-    (fw,et) <- generateFormPost $ formPumpType Nothing
-
-    msgr <- getMessageRender
-    msgs <- getMessages
-    defaultLayout $ do
-        setTitleI MsgPumpTypes
-        idOverlay <- newIdent
-        $(widgetFile "data/pump/types/new")
-
-
-getPumpTypesR :: Handler Html
-getPumpTypesR = do
-    types <- runDB $ select $ from $ table @PumpType
+getPumpLayoutNewR :: Handler Html
+getPumpLayoutNewR = do
+    (fw,et) <- generateFormPost $ formPumpLayout Nothing
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgPumpTypes
+        setTitleI MsgPumpLayouts
         idOverlay <- newIdent
-        $(widgetFile "data/pump/types/types")
+        $(widgetFile "data/pump/layouts/new")
 
 
-formPumpType :: Maybe (Entity PumpType) -> Form PumpType
-formPumpType typ extra = do
+getPumpLayoutsR :: Handler Html
+getPumpLayoutsR = do
+    types <- runDB $ select $ from $ table @PumpLayout
+
+    msgr <- getMessageRender
+    msgs <- getMessages
+    defaultLayout $ do
+        setTitleI MsgPumpLayouts
+        idOverlay <- newIdent
+        $(widgetFile "data/pump/layouts/layouts")
+
+
+formPumpLayout :: Maybe (Entity PumpLayout) -> Form PumpLayout
+formPumpLayout layout extra = do
 
     (nameR,nameV) <- mreq uniqueNameField FieldSettings
         { fsLabel = SomeMessage MsgName
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (pumpTypeName . entityVal <$> typ) 
+        } (pumpLayoutName . entityVal <$> layout) 
 
-    return ( PumpType <$> nameR
+    return ( PumpLayout <$> nameR
            , [whamlet|
                      ^{extra}
                      ^{md3widget nameV}
@@ -187,16 +187,16 @@ formPumpType typ extra = do
       uniqueName :: Text -> Handler (Either AppMessage Text)
       uniqueName name = do
           x <- runDB $ selectOne $ do
-              x <- from $ table @PumpType
-              where_ $ x ^. PumpTypeName ==. val name
+              x <- from $ table @PumpLayout
+              where_ $ x ^. PumpLayoutName ==. val name
               return x
           return $ case x of
             Nothing -> Right name
-            Just (Entity rid _) -> case typ of
+            Just (Entity rid _) -> case layout of
               Nothing -> Left MsgAlreadyExists
               Just (Entity rid' _) | rid == rid' -> Right name
                                    | otherwise -> Left MsgAlreadyExists
 
 
-formPumpTypeDelete :: Form ()
-formPumpTypeDelete extra = return (pure (),[whamlet|^{extra}|])
+formPumpLayoutDelete :: Form ()
+formPumpLayoutDelete extra = return (pure (),[whamlet|^{extra}|])

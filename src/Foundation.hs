@@ -229,6 +229,29 @@ instance Yesod App where
     isAuthorized (StaticR _) _ = return Authorized   
 
 
+    isAuthorized (DataR (StandardDeleR _)) _ = isAdmin
+    isAuthorized (DataR (StandardEditR _)) _ = isAdmin
+    isAuthorized (DataR StandardNewR) _ = isAdmin
+    isAuthorized (DataR (StandardR _)) _ = isAdmin
+    isAuthorized (DataR StandardsR) _ = setUltDestCurrent >> isAdmin
+
+    isAuthorized (DataR (PumpLayoutDeleR _)) _ = isAdmin
+    isAuthorized (DataR (PumpLayoutEditR _)) _ = isAdmin
+    isAuthorized (DataR PumpLayoutNewR) _ = isAdmin
+    isAuthorized (DataR (PumpLayoutR _)) _ = isAdmin
+    isAuthorized (DataR PumpLayoutsR) _ = setUltDestCurrent >> isAdmin
+
+    isAuthorized (DataR (PumpClassDeleR _)) _ = isAdmin
+    isAuthorized (DataR (PumpClassEditR _)) _ = isAdmin
+    isAuthorized (DataR PumpClassNewR) _ = isAdmin
+    isAuthorized (DataR (PumpClassR _)) _ = isAdmin
+    isAuthorized (DataR PumpClassesR) _ = setUltDestCurrent >> isAdmin
+    
+    isAuthorized (DataR (PumpOrientationDeleR _)) _ = isAdmin
+    isAuthorized (DataR (PumpOrientationEditR _)) _ = isAdmin
+    isAuthorized (DataR PumpOrientationNewR) _ = isAdmin
+    isAuthorized (DataR (PumpOrientationR _)) _ = isAdmin
+    isAuthorized (DataR PumpOrientationsR) _ = setUltDestCurrent >> isAdmin
     
     isAuthorized (DataR (PumpTypeDeleR _)) _ = isAdmin
     isAuthorized (DataR (PumpTypeEditR _)) _ = isAdmin

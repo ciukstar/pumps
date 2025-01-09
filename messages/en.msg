@@ -1,3 +1,11 @@
+ManufacturingStandards: Manufacturing standards
+ManufacturingStandard: Manufacturing standard
+PumpLayouts: Layouts
+PumpLayout: Layout
+PumpClasses: Pump classes
+PumpClass: Pump class
+PumpOrientations: Pump orientations
+PumpOrientation: Pump orientation
 NoDataYet: No data yet
 PumpTypes: Pump types
 PumpType: Pump type
