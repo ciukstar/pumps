@@ -38,9 +38,10 @@ import Data.Maybe (Maybe (Just))
 import Data.Ord (Ord)
 import qualified Data.Proxy as DP (Proxy)
 import Data.Text (pack, unpack) 
+import Data.Time.Calendar (Day)
 import Data.Time.Calendar.Month (Month)
 import Data.Time.Clock
-    ( UTCTime, NominalDiffTime, nominalDiffTimeToSeconds, secondsToNominalDiffTime)
+    ( NominalDiffTime, nominalDiffTimeToSeconds, secondsToNominalDiffTime)
 
 import Database.Esqueleto.Experimental (SqlString)
 import Database.Persist
@@ -50,6 +51,7 @@ import Database.Persist.Sql (PersistFieldSql, sqlType)
 import Database.Persist.TH (derivePersistField)
 import Database.Persist.Types (SqlType (SqlInt64))
 
+import GHC.Float (Double)
 import GHC.Integer (Integer)
 import GHC.Num ((*))
 import GHC.Real ((^))

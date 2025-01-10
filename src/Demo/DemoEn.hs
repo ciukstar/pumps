@@ -7,6 +7,7 @@ module Demo.DemoEn (fillDemoEn) where
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Control.Monad.Trans.Reader (ReaderT)
 
+import Data.Time.Clock (getCurrentTime, UTCTime (utctDay))
 import qualified Data.ByteString as BS
 
 import Database.Persist (PersistStoreWrite (insert, insert_))
@@ -24,7 +25,14 @@ import Model
       )
     , PumpType (PumpType, pumpTypeName)
     , PumpOrientation (PumpOrientation, pumpOrientationName)
-    , PumpClass (PumpClass, pumpClassName), PumpLayout (PumpLayout, pumpLayoutName), Standard (Standard, standardName), Location (Location, locationName), Risk (Risk, riskName)
+    , PumpClass (PumpClass, pumpClassName)
+    , PumpLayout (PumpLayout, pumpLayoutName)
+    , Standard (Standard, standardName)
+    , Location (Location, locationName)
+    , Risk (Risk, riskName)
+    , Unit (Unit, unitName, unitSymbol)
+    , Participant (Participant, participantName, participantPhone, participantEmail)
+    , Sheet (Sheet, sheetCustomer, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign, sheetQuantity)
     )
     
 import Settings (AppSettings)
@@ -36,6 +44,8 @@ import Yesod.Auth.Email (saltPass)
 
 fillDemoEn :: MonadIO m => AppSettings -> ReaderT SqlBackend m ()
 fillDemoEn _appSettings = do
+
+    now <- utctDay <$> liftIO getCurrentTime
     
     let freepik = [shamlet|
                           Designed by #
@@ -211,5 +221,125 @@ fillDemoEn _appSettings = do
 
     let risk3 = Risk { riskName = "With risks" }
     riskId3 <- insert risk3
+    
+
+    let unit1 = Unit { unitName = "Degree Celsius"
+                     , unitSymbol = "°C"
+                     }
+    uId1 <- insert unit1
+
+    let unit2 = Unit { unitName = "Millimetre"
+                     , unitSymbol = "mm"
+                     }
+    uId2 <- insert unit2
+
+    let unit3 = Unit { unitName = "Percent"
+                     , unitSymbol = "%"
+                     }
+    uId3 <- insert unit3
+
+    let unit4 = Unit { unitName = "Millipascal second"
+                     , unitSymbol = "mPa·s"
+                     }
+    uId4 <- insert unit4
+
+    let unit5 = Unit { unitName = "Centipoise"
+                     , unitSymbol = "cP"
+                     }
+    uId5 <- insert unit5
+
+    let unit6 = Unit { unitName = "Saybolt Seconds Universal"
+                     , unitSymbol = "SSU"
+                     }
+    uId6 <- insert unit6
+
+    let unit7 = Unit { unitName = "Centipoise/Millipascal second"
+                     , unitSymbol = "cP/mPa·s"
+                     }
+    uId7 <- insert unit7
+
+    let unit8 = Unit { unitName = "Density SI"
+                     , unitSymbol = "kg / m3"
+                     }
+    uId8 <- insert unit8
+
+    let unit9 = Unit { unitName = "Density 2"
+                     , unitSymbol = "kg/l"
+                     }
+    uId9 <- insert unit9
+
+    let unit10 = Unit { unitName = "Density 3"
+                     , unitSymbol = "g/cm3"
+                     }
+    uId10 <- insert unit10
+
+    
+    let participant1 = Participant { participantName = "Syncobur"
+                                   , participantPhone = Just "+1098743334"
+                                   , participantEmail = Just "syncobur@mail.xyz"
+                                   }
+    pId1 <- insert participant1
+    
+    let participant2 = Participant { participantName = "OCHKA"
+                                   , participantPhone = Just "+1098743833"
+                                   , participantEmail = Just "ochka@mail.xyz"
+                                   }
+    pId2 <- insert participant2
+    
+    let participant3 = Participant { participantName = "Cukloin"
+                                   , participantPhone = Just "+10987438755"
+                                   , participantEmail = Just "cukloin@mail.xyz"
+                                   }
+    pId3 <- insert participant3
+    
+    let participant4 = Participant { participantName = "Goloolimer"
+                                   , participantPhone = Just "+1098743321"
+                                   , participantEmail = Just "goloolimer@mail.xyz"
+                                   }
+    pId4 <- insert participant4
+    
+    let participant5 = Participant { participantName = "Jill A. Turnbow"
+                                   , participantPhone = Just "+1098743321"
+                                   , participantEmail = Just "jaturnbow@mail.xyz"
+                                   }
+    pId5 <- insert participant5
+    
+    let participant6 = Participant { participantName = "Charles S. Watkins"
+                                   , participantPhone = Just "+188996645"
+                                   , participantEmail = Just "cswatkins@xmail.edu"
+                                   }
+    pId6 <- insert participant6
+    
+    let participant7 = Participant { participantName = "Donald L. Meyer"
+                                   , participantPhone = Just "+18899019282"
+                                   , participantEmail = Just "dlmeyer@xmail.edu"
+                                   }
+    pId7 <- insert participant7
+    
+    let participant8 = Participant { participantName = "Jean J. Bullock"
+                                   , participantPhone = Just "+1889901932132"
+                                   , participantEmail = Just "jjbullock@xmail.edu"
+                                   }
+    pId8 <- insert participant8
+    
+    let sheet1 = Sheet { sheetCustomer = pId1
+                       , sheetProcedure = "PROC-0001"
+                       , sheetItem = "SA-01"
+                       , sheetDateFill = now
+                       , sheetRiskSign = True
+                       , sheetQuantity = 1
+                       }
+    sid1 <- insert sheet1
+    
+    let sheet2 = Sheet { sheetCustomer = pId2
+                       , sheetProcedure = "PROC-0002"
+                       , sheetItem = "SA-01"
+                       , sheetDateFill = now
+                       , sheetRiskSign = False
+                       , sheetQuantity = 2
+                       }
+    sid2 <- insert sheet2
+
+    
     
     return ()

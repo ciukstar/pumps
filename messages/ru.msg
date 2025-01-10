@@ -1,6 +1,14 @@
+Customer: Заказчик
+Quantity: Количество
+DateOfFilling: Дата заполнения
+PumpPositionCode: Код позиции (насоса)
+ProcedureNumber: Номер процедуры
+Symbol: Символ
+UnitsOfMeasurement: Единицы измерения
+UnitOfMeasurement: Единица измерения 
 Risks: Риски
 Risk: Риск
-Locations: Размеще́ния
+Locations: Размещения
 Location: Размещение
 ManufacturingStandards: Стандарты изготовления
 ManufacturingStandard: Стандарт изготовления
@@ -14,6 +22,8 @@ NoDataYet: Данных пока нет
 PumpTypes: Типы насосов
 PumpType: Тип насоса
 SurveySheet: Опросный лист
+SurveySheets: Опросные листы
+Participants: Участники
 Participant: Участник
 
 Undo: Отменить
@@ -103,6 +113,7 @@ Sequence: Последовательность
 End: Конец
 Start: Начало
 LoginForMoreDetailsPlease: Пожалуйста, войдите в систему для более подробной информации
+Welcome: Добро пожаловать
 WelcomeTo: Добро пожаловать на
 ChangePassword: Изменить пароль
 AlreadyExists: Уже существует

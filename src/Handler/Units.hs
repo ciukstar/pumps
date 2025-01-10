@@ -2,12 +2,12 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-module Handler.Risks
-  ( getRisksR, postRisksR
-  , getRiskR, postRiskR
-  , getRiskNewR
-  , getRiskEditR
-  , postRiskDeleR
+module Handler.Units
+  ( getUnitsR, postUnitsR
+  , getUnitR, postUnitR
+  , getUnitNewR
+  , getUnitEditR
+  , postUnitDeleR
   ) where
 
 
@@ -22,11 +22,12 @@ import Database.Persist (Entity(Entity), insert_, replace, delete)
 import Foundation
     ( Handler, Form, widgetSnackbar, widgetTopbar
     , Route (DataR)
-    , DataR (RiskNewR, RiskR, RisksR, RiskEditR, RiskDeleR)
+    , DataR (UnitNewR, UnitR, UnitsR, UnitEditR, UnitDeleR)
     , AppMessage
-      ( MsgRisk, MsgRisks, MsgNoDataYet, MsgName, MsgAlreadyExists
-      , MsgSave, MsgCancel, MsgRecordAdded, MsgDeleteAreYouSure, MsgDele
+      ( MsgUnitOfMeasurement, MsgUnitsOfMeasurement, MsgNoDataYet, MsgName
+      , MsgAlreadyExists, MsgSave, MsgCancel, MsgRecordAdded, MsgDele
       , MsgConfirmPlease, MsgRecordEdited, MsgRecordDeleted, MsgInvalidFormData
+      , MsgDeleteAreYouSure, MsgSymbol
       )
     )
     
@@ -34,8 +35,8 @@ import Material3 (md3widget)
 
 import Model
     ( msgSuccess, msgError
-    , Risk(Risk, riskName), RiskId
-    , EntityField (RiskName, RiskId)
+    , Unit(Unit, unitName, unitSymbol), UnitId
+    , EntityField (UnitName, UnitId)
     )
 
 import Settings (widgetFile)
@@ -55,129 +56,135 @@ import Yesod.Form.Types
 import Yesod.Persist.Core (YesodPersist(runDB))
 
 
-postRiskDeleR :: RiskId -> Handler Html
-postRiskDeleR rid = do
-    ((fr,_),_) <- runFormPost formRiskDelete
+postUnitDeleR :: UnitId -> Handler Html
+postUnitDeleR uid = do
+    ((fr,_),_) <- runFormPost formUnitDelete
     case fr of
       FormSuccess () -> do
-          runDB $ delete rid
+          runDB $ delete uid
           addMessageI msgSuccess MsgRecordDeleted
-          redirect $ DataR RisksR
+          redirect $ DataR UnitsR
       _otherwise -> do
           addMessageI msgError MsgInvalidFormData
-          redirect $ DataR RisksR
+          redirect $ DataR UnitsR
 
 
-postRiskR :: RiskId -> Handler Html
-postRiskR rid = do
-    risk <- runDB $ selectOne $ do
-        x <- from $ table @Risk
-        where_ $ x ^. RiskId ==. val rid
+postUnitR :: UnitId -> Handler Html
+postUnitR uid = do
+    typ <- runDB $ selectOne $ do
+        x <- from $ table @Unit
+        where_ $ x ^. UnitId ==. val uid
         return x
     
-    ((fr,fw),et) <- runFormPost $ formRisk risk
+    ((fr,fw),et) <- runFormPost $ formUnit typ
     case fr of
       FormSuccess r -> do
-          runDB $ replace rid r
+          runDB $ replace uid r
           addMessageI msgSuccess MsgRecordEdited
-          redirect $ DataR $ RiskR rid
+          redirect $ DataR $ UnitR uid
       _otherwise -> do
           msgr <- getMessageRender
           msgs <- getMessages
           defaultLayout $ do
-              setTitleI MsgRisk
+              setTitleI MsgUnitOfMeasurement
               idOverlay <- newIdent
-              $(widgetFile "data/pump/risks/edit")
+              $(widgetFile "data/pump/units/edit")
 
 
-getRiskEditR :: RiskId -> Handler Html
-getRiskEditR rid = do
-    risk <- runDB $ selectOne $ do
-        x <- from $ table @Risk
-        where_ $ x ^. RiskId ==. val rid
+getUnitEditR :: UnitId -> Handler Html
+getUnitEditR uid = do
+    unit <- runDB $ selectOne $ do
+        x <- from $ table @Unit
+        where_ $ x ^. UnitId ==. val uid
         return x
     
-    (fw,et) <- generateFormPost $ formRisk risk
+    (fw,et) <- generateFormPost $ formUnit unit
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgRisk
+        setTitleI MsgUnitOfMeasurement
         idOverlay <- newIdent
-        $(widgetFile "data/pump/risks/edit")
+        $(widgetFile "data/pump/units/edit")
 
 
-getRiskR :: RiskId -> Handler Html
-getRiskR rid = do
-    risk <- runDB $ selectOne $ do
-        x <- from $ table @Risk
-        where_ $ x ^. RiskId ==. val rid
+getUnitR :: UnitId -> Handler Html
+getUnitR uid = do
+    unit <- runDB $ selectOne $ do
+        x <- from $ table @Unit
+        where_ $ x ^. UnitId ==. val uid
         return x
 
-    (fw0,et0) <- generateFormPost formRiskDelete
+    (fw0,et0) <- generateFormPost formUnitDelete
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgRisk
+        setTitleI MsgUnitOfMeasurement
         idOverlay <- newIdent
         idDialogDelete <- newIdent
-        $(widgetFile "data/pump/risks/risk")
+        $(widgetFile "data/pump/units/unit")
 
 
-postRisksR :: Handler Html
-postRisksR = do
-    ((fr,fw),et) <- runFormPost $ formRisk Nothing
+postUnitsR :: Handler Html
+postUnitsR = do
+    ((fr,fw),et) <- runFormPost $ formUnit Nothing
     case fr of
       FormSuccess r -> do
           runDB $ insert_ r
           addMessageI msgSuccess MsgRecordAdded
-          redirect $ DataR RisksR
+          redirect $ DataR UnitsR
       _otherwise -> do
           msgr <- getMessageRender
           msgs <- getMessages
           defaultLayout $ do
-              setTitleI MsgRisks
+              setTitleI MsgUnitsOfMeasurement
               idOverlay <- newIdent
-              $(widgetFile "data/pump/risks/new")
+              $(widgetFile "data/pump/units/new")
 
 
-getRiskNewR :: Handler Html
-getRiskNewR = do
-    (fw,et) <- generateFormPost $ formRisk Nothing
-
-    msgr <- getMessageRender
-    msgs <- getMessages
-    defaultLayout $ do
-        setTitleI MsgRisks
-        idOverlay <- newIdent
-        $(widgetFile "data/pump/risks/new")
-
-
-getRisksR :: Handler Html
-getRisksR = do
-    risks <- runDB $ select $ from $ table @Risk
+getUnitNewR :: Handler Html
+getUnitNewR = do
+    (fw,et) <- generateFormPost $ formUnit Nothing
 
     msgr <- getMessageRender
     msgs <- getMessages
     defaultLayout $ do
-        setTitleI MsgRisks
+        setTitleI MsgUnitsOfMeasurement
         idOverlay <- newIdent
-        $(widgetFile "data/pump/risks/risks")
+        $(widgetFile "data/pump/units/new")
 
 
-formRisk :: Maybe (Entity Risk) -> Form Risk
-formRisk risk extra = do
+getUnitsR :: Handler Html
+getUnitsR = do
+    units <- runDB $ select $ from $ table @Unit
+
+    msgr <- getMessageRender
+    msgs <- getMessages
+    defaultLayout $ do
+        setTitleI MsgUnitsOfMeasurement
+        idOverlay <- newIdent
+        $(widgetFile "data/pump/units/units")
+
+
+formUnit :: Maybe (Entity Unit) -> Form Unit
+formUnit unit extra = do
 
     (nameR,nameV) <- mreq uniqueNameField FieldSettings
         { fsLabel = SomeMessage MsgName
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (riskName . entityVal <$> risk) 
+        } (unitName . entityVal <$> unit) 
 
-    return ( Risk <$> nameR
+    (symbolR,symbolV) <- mreq uniqueNameField FieldSettings
+        { fsLabel = SomeMessage MsgSymbol
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (unitSymbol . entityVal <$> unit) 
+
+    return ( Unit <$> nameR <*> symbolR
            , [whamlet|
                      ^{extra}
                      ^{md3widget nameV}
+                     ^{md3widget symbolV}
                      |]
            )
   where
@@ -187,16 +194,16 @@ formRisk risk extra = do
       uniqueName :: Text -> Handler (Either AppMessage Text)
       uniqueName name = do
           x <- runDB $ selectOne $ do
-              x <- from $ table @Risk
-              where_ $ x ^. RiskName ==. val name
+              x <- from $ table @Unit
+              where_ $ x ^. UnitName ==. val name
               return x
           return $ case x of
             Nothing -> Right name
-            Just (Entity rid _) -> case risk of
+            Just (Entity uid _) -> case unit of
               Nothing -> Left MsgAlreadyExists
-              Just (Entity rid' _) | rid == rid' -> Right name
+              Just (Entity uid' _) | uid == uid' -> Right name
                                    | otherwise -> Left MsgAlreadyExists
 
 
-formRiskDelete :: Form ()
-formRiskDelete extra = return (pure (),[whamlet|^{extra}|])
+formUnitDelete :: Form ()
+formUnitDelete extra = return (pure (),[whamlet|^{extra}|])

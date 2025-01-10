@@ -1,0 +1,32 @@
+
+^{widgetTopbar Nothing (msgr MsgSurveySheets) idOverlay Nothing Nothing}
+
+<main.responsive.no-padding>
+  $if null sheets
+    <figure.margin.pading.center-align>
+      <i.extra>folder_open
+      <figcaption>
+        _{MsgNoDataYet}.
+  $else
+    $forall Entity sid (Sheet _ procedure item dateFill _ _) <- sheets
+      <a.row.padding.wave href=@{DataR $ SheetR sid}>
+
+        <div.content.max>
+          <h6.headline.large-text>
+            #{procedure}
+            
+          <div.supporting-text.small-text>
+            #{item}
+            
+          <div.supporting-text.small-text>
+            #{show dateFill}
+
+        <i>arrow_forward_ios
+
+      <hr>
+
+  <a.button.circle.extra.fixed.right.bottom.margin.medium-elevate href=@{DataR SheetNewR}
+    style="z-index:1" onclick="event.stopPropagation()">
+    <i>add
+
+  ^{widgetSnackbar msgs}

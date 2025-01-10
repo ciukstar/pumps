@@ -1,3 +1,11 @@
+Customer: Customer
+Quantity: Quantity
+DateOfFilling: Date of filling
+PumpPositionCode: Position code (pump)
+ProcedureNumber: Procedure number
+Symbol: Symbol
+UnitsOfMeasurement: Units of measurement
+UnitOfMeasurement: Unit of measurement
 Risks: Risks
 Risk: Risk
 Locations: Locations
@@ -14,6 +22,8 @@ NoDataYet: No data yet
 PumpTypes: Pump types
 PumpType: Pump type
 SurveySheet: Survey sheet
+SurveySheets: Survey sheets
+Participants: Participants
 Participant: Participant
 
 Undo: Undo
@@ -103,6 +113,7 @@ Sequence: Sequence
 End: End
 Start: Start
 LoginForMoreDetailsPlease: Please login for more details
+Welcome: Welcome
 WelcomeTo: Welcome to
 ChangePassword: Change password
 AlreadyExists: Already exists

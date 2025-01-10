@@ -1,0 +1,37 @@
+
+^{widgetTopbar (Just (DataR ParticipantsR,[])) (msgr MsgParticipant) idOverlay (Just idDialogDelete) (Just $ DataR $ ParticipantEditR pid)}
+
+<main.responsive>
+    
+  $maybe Entity _ (Participant name phone email) <- participant
+    <dl.margin>
+
+      <dt.bold>_{MsgName}
+      <dd.small-margin>
+        #{name}
+
+      <dt.bold>_{MsgPhone}
+      <dd.small-margin>
+        $maybe phone <- phone
+          #{phone}
+
+      <dt.bold>_{MsgEmail}
+      <dd.small-margin>
+        $maybe email <- email
+          #{email}
+
+^{widgetSnackbar msgs}
+
+<div.overlay ##{idOverlay} data-ui=##{idOverlay}>
+
+<dialog ##{idDialogDelete}>
+  <h5>_{MsgConfirmPlease}
+  <div>_{MsgDeleteAreYouSure}
+  <nav.right-align.no-space>
+    <button.transparent.link data-ui=##{idOverlay}
+      onclick="document.getElementById('#{idDialogDelete}').close()">
+      _{MsgCancel}
+    <form method=post action=@{DataR $ ParticipantDeleR pid} enctype=#{et0}>
+      ^{fw0}
+      <button.primary type=submit>
+        _{MsgDele}

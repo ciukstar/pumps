@@ -18,6 +18,20 @@
       <i>home
       <span>_{MsgHome}
 
+    <hr>
+    
+    <a href=@{DataR SheetsR} :curr == Just (DataR SheetsR):.active>
+      <i>task
+      <span>_{MsgSurveySheets}
+    
+    <a href=@{DataR ParticipantsR} :curr == Just (DataR ParticipantsR):.active>
+      <i>diversity_3
+      <span>_{MsgParticipants}
+
+    <a href=@{DataR UnitsR} :curr == Just (DataR UnitsR):.active>
+      <i>scale
+      <span>_{MsgUnitsOfMeasurement}
+      
     <a href=@{DataR RisksR} :curr == Just (DataR RisksR):.active>
       <i>report
       <span>_{MsgRisks}

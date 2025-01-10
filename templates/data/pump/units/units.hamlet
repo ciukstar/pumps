@@ -1,0 +1,29 @@
+
+^{widgetTopbar Nothing (msgr MsgUnitsOfMeasurement) idOverlay Nothing Nothing}
+
+<main.responsive.no-padding>
+  $if null units
+    <figure.margin.pading.center-align>
+      <i.extra>folder_open
+      <figcaption>
+        _{MsgNoDataYet}.
+  $else
+    $forall Entity uid (Unit name symbol) <- units
+      <a.row.padding.wave href=@{DataR $ UnitR uid}>
+
+        <div.content.max>
+          <h6.headline.large-text>
+            #{name}
+            
+          <div.supporting-text.small-text>
+            #{symbol}
+
+        <i>arrow_forward_ios
+
+      <hr>
+
+  <a.button.circle.extra.fixed.right.bottom.margin.medium-elevate href=@{DataR UnitNewR}
+    style="z-index:1" onclick="event.stopPropagation()">
+    <i>add
+
+  ^{widgetSnackbar msgs}

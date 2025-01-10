@@ -1,0 +1,36 @@
+
+^{widgetTopbar (Just (DataR SheetsR,[])) (msgr MsgSurveySheet) idOverlay (Just idDialogDelete) (Just $ DataR $ SheetEditR sid)}
+
+<main.responsive>
+    
+  $maybe (Entity _ (Sheet _ procedure item dateFill riskSign quantity), customer) <- sheet
+    <dl.margin>
+    
+      $with Entity _ (Participant name _ _) <- customer
+        <dt.bold>_{MsgCustomer}
+        <dd.small-margin>
+          #{name}
+        
+      <dt.bold>_{MsgProcedureNumber}
+      <dd.small-margin>
+        #{procedure}
+
+      <dt.bold>_{MsgPumpPositionCode}
+      <dd.small-margin>
+        #{item}
+
+^{widgetSnackbar msgs}
+
+<div.overlay ##{idOverlay} data-ui=##{idOverlay}>
+
+<dialog ##{idDialogDelete}>
+  <h5>_{MsgConfirmPlease}
+  <div>_{MsgDeleteAreYouSure}
+  <nav.right-align.no-space>
+    <button.transparent.link data-ui=##{idOverlay}
+      onclick="document.getElementById('#{idDialogDelete}').close()">
+      _{MsgCancel}
+    <form method=post action=@{DataR $ SheetDeleR sid} enctype=#{et0}>
+      ^{fw0}
+      <button.primary type=submit>
+        _{MsgDele}

@@ -1,0 +1,30 @@
+
+^{widgetTopbar Nothing (msgr MsgParticipants) idOverlay Nothing Nothing}
+
+<main.responsive.no-padding>
+  $if null participants
+    <figure.margin.pading.center-align>
+      <i.extra>folder_open
+      <figcaption>
+        _{MsgNoDataYet}.
+  $else
+    $forall Entity pid (Participant name _ email) <- participants
+      <a.row.padding.wave href=@{DataR $ ParticipantR pid}>
+
+        <div.content.max>
+          <h6.headline.large-text>
+            #{name}
+
+          $maybe email <- email
+            <div.supporting-text.small-text>
+              #{email}
+
+        <i>arrow_forward_ios
+
+      <hr>
+
+  <a.button.circle.extra.fixed.right.bottom.margin.medium-elevate href=@{DataR ParticipantNewR}
+    style="z-index:1" onclick="event.stopPropagation()">
+    <i>add
+
+  ^{widgetSnackbar msgs}

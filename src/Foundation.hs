@@ -226,8 +226,28 @@ instance Yesod App where
     isAuthorized SitemapR _ = return Authorized
     isAuthorized WebAppManifestR _ = return Authorized
     
-    isAuthorized (StaticR _) _ = return Authorized   
+    isAuthorized (StaticR _) _ = return Authorized
 
+    isAuthorized (SurveyR _) _ = return Authorized
+    isAuthorized SurveysR _ = return Authorized
+    
+    isAuthorized (DataR (SheetDeleR _)) _ = isAdmin
+    isAuthorized (DataR (SheetEditR _)) _ = isAdmin
+    isAuthorized (DataR SheetNewR) _ = isAdmin
+    isAuthorized (DataR (SheetR _)) _ = isAdmin
+    isAuthorized (DataR SheetsR) _ = setUltDestCurrent >> isAdmin
+
+    isAuthorized (DataR (ParticipantDeleR _)) _ = isAdmin
+    isAuthorized (DataR (ParticipantEditR _)) _ = isAdmin
+    isAuthorized (DataR ParticipantNewR) _ = isAdmin
+    isAuthorized (DataR (ParticipantR _)) _ = isAdmin
+    isAuthorized (DataR ParticipantsR) _ = setUltDestCurrent >> isAdmin
+
+    isAuthorized (DataR (UnitDeleR _)) _ = isAdmin
+    isAuthorized (DataR (UnitEditR _)) _ = isAdmin
+    isAuthorized (DataR UnitNewR) _ = isAdmin
+    isAuthorized (DataR (UnitR _)) _ = isAdmin
+    isAuthorized (DataR UnitsR) _ = setUltDestCurrent >> isAdmin
 
     isAuthorized (DataR (RiskDeleR _)) _ = isAdmin
     isAuthorized (DataR (RiskEditR _)) _ = isAdmin

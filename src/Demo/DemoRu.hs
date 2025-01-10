@@ -8,6 +8,7 @@ import Control.Monad.IO.Class (MonadIO (liftIO))
 import Control.Monad.Trans.Reader (ReaderT)
 
 import qualified Data.ByteString as BS
+import Data.Time.Clock (getCurrentTime, UTCTime (utctDay))
 
 import Database.Persist (PersistStoreWrite (insert, insert_))
 import Database.Persist.SqlBackend (SqlBackend)
@@ -24,7 +25,14 @@ import Model
       )
     , PumpType (PumpType, pumpTypeName)
     , PumpOrientation (PumpOrientation, pumpOrientationName)
-    , PumpClass (PumpClass, pumpClassName), PumpLayout (PumpLayout, pumpLayoutName), Standard (Standard, standardName), Location (Location, locationName), Risk (Risk, riskName)
+    , PumpClass (PumpClass, pumpClassName)
+    , PumpLayout (PumpLayout, pumpLayoutName)
+    , Standard (Standard, standardName)
+    , Location (Location, locationName)
+    , Risk (Risk, riskName)
+    , Unit (Unit, unitName, unitSymbol)
+    , Participant (Participant, participantName, participantPhone, participantEmail)
+    , Sheet (Sheet, sheetCustomer, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign, sheetQuantity)
     )
     
 import Settings (AppSettings)
@@ -37,6 +45,8 @@ import Yesod.Auth.Email (saltPass)
 fillDemoRu :: MonadIO m => AppSettings -> ReaderT SqlBackend m ()
 fillDemoRu _appSettings = do
 
+    now <- utctDay <$> liftIO getCurrentTime
+    
     let freepik = [shamlet|
                           Designed by #
                           <a href="https://www.freepik.com/" target=_blank>
@@ -213,5 +223,123 @@ fillDemoRu _appSettings = do
 
     let risk3 = Risk { riskName = "С РИСКАМ" }
     riskId3 <- insert risk3
+    
+
+    let unit1 = Unit { unitName = "Градус Цельсия"
+                     , unitSymbol = "°C"
+                     }
+    uId1 <- insert unit1
+
+    let unit2 = Unit { unitName = "Миллиметр"
+                     , unitSymbol = "мм"
+                     }
+    uId2 <- insert unit2
+
+    let unit3 = Unit { unitName = "Процент"
+                     , unitSymbol = "%"
+                     }
+    uId3 <- insert unit3
+
+    let unit4 = Unit { unitName = "Миллипаскаль-секунда"
+                     , unitSymbol = "mPa·s"
+                     }
+    uId4 <- insert unit4
+
+    let unit5 = Unit { unitName = "Сантипуаз"
+                     , unitSymbol = "cP"
+                     }
+    uId5 <- insert unit5
+
+    let unit6 = Unit { unitName = "Секунды Сейболта"
+                     , unitSymbol = "SSU"
+                     }
+    uId6 <- insert unit6
+
+    let unit7 = Unit { unitName = "Сантипуаз/Миллипаскаль-секунда"
+                     , unitSymbol = "cPs/mPa*s"
+                     }
+    uId7 <- insert unit7
+
+    let unit8 = Unit { unitName = "Плотность SI"
+                     , unitSymbol = "kg / m3"
+                     }
+    uId8 <- insert unit8
+
+    let unit9 = Unit { unitName = "Плотность литра"
+                     , unitSymbol = "kg/l"
+                     }
+    uId9 <- insert unit9
+
+    let unit10 = Unit { unitName = "Плотность кубического сантиметра"
+                     , unitSymbol = "g/cm3"
+                     }
+    uId10 <- insert unit10
+
+    
+    let participant1 = Participant { participantName = "Синкобур"
+                                   , participantPhone = Just "+01098743334"
+                                   , participantEmail = Just "syncobur@mail.xyz"
+                                   }
+    pId1 <- insert participant1
+    
+    let participant2 = Participant { participantName = "ОСНКА"
+                                   , participantPhone = Just "+1098743833"
+                                   , participantEmail = Just "ochka@mail.xyz"
+                                   }
+    pId2 <- insert participant2
+    
+    let participant3 = Participant { participantName = "Куклойн"
+                                   , participantPhone = Just "+10987438755"
+                                   , participantEmail = Just "cukloin@mail.xyz"
+                                   }
+    pId3 <- insert participant3
+    
+    let participant4 = Participant { participantName = "Голоолимер"
+                                   , participantPhone = Just "+1098743321"
+                                   , participantEmail = Just "goloolimer@mail.xyz"
+                                   }
+    pId4 <- insert participant4
+    
+    let participant5 = Participant { participantName = "Ольга Алексеева"
+                                   , participantPhone = Just "+1098743321"
+                                   , participantEmail = Just "oalekseeva@mail.xyz"
+                                   }
+    pId5 <- insert participant5
+    
+    let participant6 = Participant { participantName = "Леонтий Глазков"
+                                   , participantPhone = Just "+188996645"
+                                   , participantEmail = Just "lglazkov@mail.xyz"
+                                   }
+    pId6 <- insert participant6
+    
+    let participant7 = Participant { participantName = "Остап Безруков"
+                                   , participantPhone = Just "+18899019282"
+                                   , participantEmail = Just "obezrukov@mail.xyz"
+                                   }
+    pId7 <- insert participant7
+    
+    let participant8 = Participant { participantName = "Вера Яшина"
+                                   , participantPhone = Just "+1889901932132"
+                                   , participantEmail = Just "vyashina@mail.xyz"
+                                   }
+    pId8 <- insert participant8
+    
+    let sheet1 = Sheet { sheetCustomer = pId1
+                       , sheetProcedure = "PROC-0001"
+                       , sheetItem = "SA-01"
+                       , sheetDateFill = now
+                       , sheetRiskSign = True
+                       , sheetQuantity = 1
+                       }
+    sid1 <- insert sheet1
+    
+    let sheet2 = Sheet { sheetCustomer = pId2
+                       , sheetProcedure = "PROC-0002"
+                       , sheetItem = "SA-01"
+                       , sheetDateFill = now
+                       , sheetRiskSign = False
+                       , sheetQuantity = 2
+                       }
+    sid2 <- insert sheet2
 
     return ()

@@ -2,12 +2,19 @@
 -- Syntax for this file here: https://github.com/yesodweb/persistent/blob/master/docs/Persistent-entity-syntax.md
 
 
+Sheet sql=survey_sheet
+    customer ParticipantId OnDeleteCascade
+    procedure Text sql=procedure_number
+    item Text sql=pump_item_code
+    dateFill Day
+    riskSign Bool
+    quantity Double
 
 
 Participant
     name Text
-    phone Text
-    email Text
+    phone Text Maybe
+    email Text Maybe
     UniqueParticipant name
 
 Unit

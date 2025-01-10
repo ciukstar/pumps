@@ -4,9 +4,10 @@
 <main.responsive.no-padding ##{idMain}>
 
   <h5.intro.small.center-align>
-    _{MsgWelcomeTo} _{MsgAppName}
+    _{MsgWelcome}
          
-        
+  <a.large-text.link href=@{SurveysR}>
+    _{MsgSurveySheets} (#{sheets})
 
 
 $if not (null msgs)

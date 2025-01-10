@@ -2,6 +2,8 @@
 -- Syntax for this file here: https://www.yesodweb.com/book/routing-and-handlers
 
 
+/surveys/#SheetId SurveyR  GET
+/surveys          SurveysR GET
 
 / HomeR GET
 
@@ -21,23 +23,41 @@
 
 /data DataR:
 
-    /pump/risks/#RiskId/dele RiskDeleR POST
-    /pump/risks/#RiskId/edit RiskEditR GET
-    /pump/risks/new/form     RiskNewR  GET
-    /pump/risks/#RiskId      RiskR     GET POST
-    /pump/risks              RisksR    GET POST
+    /sheets/#SheetId/dele SheetDeleR POST
+    /sheets/#SheetId/edit SheetEditR GET
+    /sheets/new/form      SheetNewR  GET
+    /sheets/#SheetId      SheetR     GET POST
+    /sheets               SheetsR    GET POST
 
-    /pump/locations/#LocationId/dele LocationDeleR POST
-    /pump/locations/#LocationId/edit LocationEditR GET
-    /pump/locations/new/form         LocationNewR  GET
-    /pump/locations/#LocationId      LocationR     GET POST
-    /pump/locations                  LocationsR    GET POST
+    /participants/#ParticipantId/dele ParticipantDeleR POST
+    /participants/#ParticipantId/edit ParticipantEditR GET
+    /participants/new/form            ParticipantNewR  GET
+    /participants/#ParticipantId      ParticipantR     GET POST
+    /participants                     ParticipantsR    GET POST
 
-    /pump/standards/#StandardId/dele StandardDeleR POST
-    /pump/standards/#StandardId/edit StandardEditR GET
-    /pump/standards/new/form         StandardNewR  GET
-    /pump/standards/#StandardId      StandardR     GET POST
-    /pump/standards                  StandardsR    GET POST
+    /units/#UnitId/dele UnitDeleR POST
+    /units/#UnitId/edit UnitEditR GET
+    /units/new/form     UnitNewR  GET
+    /units/#UnitId      UnitR     GET POST
+    /units              UnitsR    GET POST
+
+    /risks/#RiskId/dele RiskDeleR POST
+    /risks/#RiskId/edit RiskEditR GET
+    /risks/new/form     RiskNewR  GET
+    /risks/#RiskId      RiskR     GET POST
+    /risks              RisksR    GET POST
+
+    /locations/#LocationId/dele LocationDeleR POST
+    /locations/#LocationId/edit LocationEditR GET
+    /locations/new/form         LocationNewR  GET
+    /locations/#LocationId      LocationR     GET POST
+    /locations                  LocationsR    GET POST
+
+    /standards/#StandardId/dele StandardDeleR POST
+    /standards/#StandardId/edit StandardEditR GET
+    /standards/new/form         StandardNewR  GET
+    /standards/#StandardId      StandardR     GET POST
+    /standards                  StandardsR    GET POST
 
     /pump/layouts/#PumpLayoutId/dele PumpLayoutDeleR POST
     /pump/layouts/#PumpLayoutId/edit PumpLayoutEditR GET

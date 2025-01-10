@@ -1,0 +1,37 @@
+
+^{widgetTopbar (Just (SurveysR,[])) (msgr MsgSurveySheet) idOverlay Nothing Nothing}
+
+<main.responsive>
+    
+  $maybe (Entity _ (Sheet _ procedure item dateFill riskSign quantity), customer) <- sheet
+    <dl.margin>
+    
+      $with Entity _ (Participant name _ _) <- customer
+        <dt.bold>_{MsgCustomer}
+        <dd.small-margin>
+          #{name}
+        
+      <dt.bold>_{MsgProcedureNumber}
+      <dd.small-margin>
+        #{procedure}
+
+      <dt.bold>_{MsgPumpPositionCode}
+      <dd.small-margin>
+        #{item}
+
+      <dt.bold>_{MsgDateOfFilling}
+      <dd.small-margin>
+        #{show dateFill}
+
+      <dt.bold>_{MsgRisk}
+      <dd.small-margin>
+        $if riskSign
+          _{MsgYes}
+        $else
+          _{MsgNo}
+
+      <dt.bold>_{MsgQuantity}
+      <dd.small-margin>
+        #{quantity}
+
+^{widgetSnackbar msgs}
