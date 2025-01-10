@@ -12,7 +12,7 @@ module Handler.Home
   ) where
 
 import Database.Esqueleto.Experimental
-    ( SqlExpr, selectOne, from, table, countRows, Value (unValue)
+    ( SqlExpr, Value (unValue), selectOne, from, table, countRows
     )
     
 import Foundation
