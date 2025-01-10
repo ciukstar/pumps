@@ -1,13 +1,15 @@
 
 ^{widgetTopbar Nothing (msgr MsgAppName) idOverlay Nothing Nothing}
 
-<main.responsive.no-padding ##{idMain}>
+<main.responsive ##{idMain}>
 
   <h5.intro.small.center-align>
     _{MsgWelcome}
-         
-  <a.large-text.link href=@{SurveysR}>
-    _{MsgSurveySheets} (#{sheets})
+
+  <nav.center-align>
+    <a.button.fill href=@{SurveysR}>
+      <span>_{MsgSurveySheets}
+      <div.badge.none.tertiary>#{nSheets}
 
 
 $if not (null msgs)

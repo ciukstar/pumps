@@ -11,8 +11,10 @@ module Handler.Home
   ( getHomeR
   ) where
 
-import Data.Maybe (maybe) 
-
+import Database.Esqueleto.Experimental
+    ( SqlExpr, selectOne, from, table, countRows, Value (unValue)
+    )
+    
 import Foundation
     ( Handler, widgetSnackbar, widgetTopbar
     , Route (SurveysR)
@@ -20,6 +22,8 @@ import Foundation
       ( MsgAppName, MsgWelcome, MsgSurveySheets
       )
     )
+    
+import Model (Sheet)
 
 import Settings (widgetFile)
 
@@ -30,15 +34,13 @@ import Yesod.Core
     , getMessageRender, newIdent
     )
 import Yesod.Core.Widget (setTitleI)
-import Model (Sheet(Sheet))
-import Database.Esqueleto.Experimental (SqlExpr, selectOne, from, table, countRows, Value (Value, unValue))
 import Yesod.Persist.Core (YesodPersist(runDB))
 
 
 getHomeR :: Handler Html
 getHomeR = do
 
-    sheets <- maybe 0 unValue <$> runDB ( selectOne $ do
+    nSheets <- maybe 0 unValue <$> runDB ( selectOne $ do
         _ <- from $ table @Sheet
         return (countRows :: SqlExpr (Value Int)) )
     

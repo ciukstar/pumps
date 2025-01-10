@@ -17,7 +17,7 @@ Create and manage Survey Sheets
   
 * Data administrator  
 
-  Data administrators have full access to all events and data.
+  Data administrators have full access to all data and can grant or revoke administrator rights to other users.
 
 
 * Superuser  

@@ -196,4 +196,4 @@ Doc003 href@Text: Please note that the application currently running is a demo a
 Doc004: A superuser account is defined at deployment time. The superuser manages other users and grants or revokes administrator privileges to specific users.
 Doc005: Integration with external APIs
 Doc006: An event manager can create events, send notifications, assign participants only to those events that he manages.
-Doc007: Data administrators have full access to all events and data.
+Doc007: Data administrators have full access to all data and can grant or revoke administrator rights to other users.
