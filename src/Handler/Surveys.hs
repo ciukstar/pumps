@@ -8,9 +8,8 @@ module Handler.Surveys
   ) where
 
 import Database.Esqueleto.Experimental
-    ( select, from, table, selectOne, where_, val
+    ( select, from, table, selectOne, where_, val, innerJoin, on
     , (^.), (==.), (:&)((:&))
-    , innerJoin, on
     )
 import Database.Persist (Entity(Entity))
 
@@ -18,10 +17,10 @@ import Foundation
     ( Handler, widgetSnackbar, widgetTopbar
     , Route (SurveyR, SurveysR)
     , AppMessage
-      ( MsgSurveySheet, MsgSurveySheets, MsgNoDataYet
-      , MsgSurveySheets, MsgSurveySheet, MsgQuantity
-      , MsgPumpPositionCode, MsgProcedureNumber, MsgDateOfFilling
-      , MsgCustomer, MsgRisk, MsgYes, MsgNo
+      ( MsgSurveySheet, MsgSurveySheets, MsgNoDataYet, MsgSurveySheets
+      , MsgSurveySheet, MsgPumpPositionCode, MsgProcedureNumber, MsgNo
+      , MsgQuantity, MsgDateOfFilling, MsgCustomer, MsgRisk, MsgYes
+      , MsgProcedureStartDate, MsgCompletionDate, MsgResponsibleCustomer
       )
     )
 
@@ -32,7 +31,7 @@ import Model
       ( Sheet
       )
     , EntityField
-      ( SheetId, ParticipantId, SheetCustomer)
+      ( SheetId, ParticipantId, SheetCustomer, SheetResponsibleCustomer)
     )
 
 import Settings (widgetFile)
@@ -45,14 +44,14 @@ import Yesod.Core
 import Yesod.Persist.Core (YesodPersist(runDB))
 
 
-
 getSurveyR :: SheetId -> Handler Html
 getSurveyR sid = do
-    sheet <- runDB $ selectOne $ do
-        x :& c <- from $ table @Sheet
+    survey <- runDB $ selectOne $ do
+        x :& c :& r <- from $ table @Sheet
             `innerJoin` table @Participant `on` (\(x :& c) -> x ^. SheetCustomer ==. c ^. ParticipantId)
+            `innerJoin` table @Participant `on` (\(x :& _ :& r) -> x ^. SheetResponsibleCustomer ==. r ^. ParticipantId)
         where_ $ x ^. SheetId ==. val sid
-        return (x,c)
+        return ((x,c),r)
 
     msgr <- getMessageRender
     msgs <- getMessages

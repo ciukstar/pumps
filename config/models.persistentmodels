@@ -4,7 +4,10 @@
 
 Sheet sql=survey_sheet
     customer ParticipantId OnDeleteCascade
+    responsibleCustomer ParticipantId OnDeleteCascade
     procedure Text sql=procedure_number
+    procedureStartDate Day
+    procedureEndDate Day
     item Text sql=pump_item_code
     dateFill Day
     riskSign Bool

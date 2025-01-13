@@ -7,8 +7,9 @@ module Demo.DemoEn (fillDemoEn) where
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Control.Monad.Trans.Reader (ReaderT)
 
-import Data.Time.Clock (getCurrentTime, UTCTime (utctDay))
 import qualified Data.ByteString as BS
+import Data.Time.Calendar (addDays)
+import Data.Time.Clock (getCurrentTime, UTCTime (utctDay))
 
 import Database.Persist (PersistStoreWrite (insert, insert_))
 import Database.Persist.SqlBackend (SqlBackend)
@@ -32,7 +33,10 @@ import Model
     , Risk (Risk, riskName)
     , Unit (Unit, unitName, unitSymbol)
     , Participant (Participant, participantName, participantPhone, participantEmail)
-    , Sheet (Sheet, sheetCustomer, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign, sheetQuantity)
+    , Sheet
+      ( Sheet, sheetCustomer, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign
+      , sheetQuantity, sheetProcedureStartDate, sheetProcedureEndDate, sheetResponsibleCustomer
+      )
     )
     
 import Settings (AppSettings)
@@ -323,7 +327,10 @@ fillDemoEn _appSettings = do
     pId8 <- insert participant8
     
     let sheet1 = Sheet { sheetCustomer = pId1
+                       , sheetResponsibleCustomer = pId5
                        , sheetProcedure = "PROC-0001"
+                       , sheetProcedureStartDate = addDays 1 now
+                       , sheetProcedureEndDate = addDays 10 now
                        , sheetItem = "SA-01"
                        , sheetDateFill = now
                        , sheetRiskSign = True
@@ -332,9 +339,12 @@ fillDemoEn _appSettings = do
     sid1 <- insert sheet1
     
     let sheet2 = Sheet { sheetCustomer = pId2
+                       , sheetResponsibleCustomer = pId6
                        , sheetProcedure = "PROC-0002"
                        , sheetItem = "SA-01"
                        , sheetDateFill = now
+                       , sheetProcedureStartDate = addDays 2 now
+                       , sheetProcedureEndDate = addDays 10 now
                        , sheetRiskSign = False
                        , sheetQuantity = 2
                        }

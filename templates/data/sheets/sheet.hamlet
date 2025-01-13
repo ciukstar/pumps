@@ -2,24 +2,52 @@
 ^{widgetTopbar (Just (DataR SheetsR,[])) (msgr MsgSurveySheet) idOverlay (Just idDialogDelete) (Just $ DataR $ SheetEditR sid)}
 
 <main.responsive>
+
+  <div.tabs.min.scroll>
+    <a.active href=@{DataR SheetsR}>_{MsgServicePart}
+    <a href=#>_{MsgBasicInformation}
+    <a href=#>_{MsgPumpedLiquid}
+    <a href=#>_{MsgTechnicalInformation}
+    <a href=#>_{MsgDesignFeatures}
+    <a href=#>_{MsgFlanges}
+    <a href=#>_{MsgElectricMotorInfo}
     
-  $maybe (Entity _ (Sheet _ procedure item dateFill riskSign quantity), customer) <- sheet
-    <dl.margin>
     
-      $with Entity _ (Participant name _ _) <- customer
-        <dt.bold>_{MsgCustomer}
+  <div.page.padding.active>
+    $maybe ((Entity _ (Sheet _ _ proc procStart procEnd item _df _rs _q),cust),respCust) <- sheet
+      <dl.margin>
+
+        $with Entity _ (Participant name _ _) <- cust
+          <dt.bold>_{MsgCustomer}
+          <dd.small-margin>
+            #{name}
+
+        <dt.bold>_{MsgProcedureNumber}
         <dd.small-margin>
-          #{name}
-        
-      <dt.bold>_{MsgProcedureNumber}
-      <dd.small-margin>
-        #{procedure}
+          #{proc}
 
-      <dt.bold>_{MsgPumpPositionCode}
-      <dd.small-margin>
-        #{item}
+        <dt.bold>_{MsgPumpPositionCode}
+        <dd.small-margin>
+          #{item}
 
-^{widgetSnackbar msgs}
+        <dt.bold>_{MsgProcedureStartDate}
+        <dd.small-margin>
+          $with dt <- show procStart
+            <time.day datetime=#{dt}>
+              #{dt}
+
+        <dt.bold>_{MsgCompletionDate}
+        <dd.small-margin>
+          $with dt <- show procEnd
+            <time.day datetime=#{dt}>
+              #{dt}
+
+        $with Entity _ (Participant name _ _) <- respCust
+          <dt.bold>_{MsgResponsibleCustomer}
+          <dd.small-margin>
+            #{name}
+
+  ^{widgetSnackbar msgs}
 
 <div.overlay ##{idOverlay} data-ui=##{idOverlay}>
 

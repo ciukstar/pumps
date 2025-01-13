@@ -1,3 +1,18 @@
+ResponsibleCustomer: Responsible customer
+CompletionDate: Completion date
+ProcedureEndDate: Procedure end date
+ProcedureStartDate: Procedure start date
+ElectricMotorInfo: Electric motor info
+BasicInformationAboutTheElectricMotor: Basic information about the electric motor
+Flanges: Flanges
+DesignFeatures: Design features
+DesignFeaturesOfThePump: Design features of the pump
+TechnicalInformation: Technical information
+TechnicalInformationAboutThePump: Technical information about the pump
+PumpedLiquid: Pumped liquid
+BasicInformationAboutThePumpedLiquid: Basic information about the pumped liquid
+BasicInformation: Basic Information
+ServicePart: Service part
 Customer: Customer
 Quantity: Quantity
 DateOfFilling: Date of filling

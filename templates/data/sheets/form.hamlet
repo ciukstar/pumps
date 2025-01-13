@@ -1,0 +1,26 @@
+
+^{extra}
+
+<details.fieldset>
+  <summary.none>
+    <article.round.primary.no-elevate>
+      <nav>
+        <div.max>_{MsgServicePart}
+        <i>expand_more
+
+  ^{md3selectWidget customerV}
+  ^{md3widget procedureV}
+  ^{md3widget itemV}
+  ^{md3widget procedureStartDateV}
+  ^{md3widget procedureEndDateV}
+  ^{md3selectWidget responsibleCustomerV}
+  ^{md3widget dateFillV}
+  ^{md3switchWidget riskSignV}
+  ^{md3widget quantityV}
+
+<details.top-margin>
+  <summary.none>
+    <article.round.primary.no-elevate>
+      <nav>
+        <div.max>_{MsgBasicInformationAboutThePumpedLiquid}
+        <i>expand_more

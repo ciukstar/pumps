@@ -8,18 +8,20 @@
       <figcaption>
         _{MsgNoDataYet}.
   $else
-    $forall Entity sid (Sheet _ procedure item dateFill _ _) <- sheets
+    $forall Entity sid (Sheet _ _ proc _ _ item dateFill _ _) <- sheets
       <a.row.padding.wave href=@{DataR $ SheetR sid}>
 
         <div.content.max>
           <h6.headline.large-text>
-            #{procedure}
+            #{proc}
             
           <div.supporting-text.small-text>
             #{item}
             
           <div.supporting-text.small-text>
-            #{show dateFill}
+            $with dt <- show dateFill
+              <time.day datetime=#{dt}>
+                #{dt}
 
         <i>arrow_forward_ios
 

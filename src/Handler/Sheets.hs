@@ -31,7 +31,9 @@ import Foundation
       , MsgConfirmPlease, MsgRecordEdited, MsgRecordDeleted, MsgInvalidFormData
       , MsgDeleteAreYouSure, MsgSurveySheets, MsgSurveySheet, MsgQuantity
       , MsgPumpPositionCode, MsgProcedureNumber, MsgDateOfFilling, MsgRisks
-      , MsgCustomer
+      , MsgCustomer, MsgServicePart, MsgBasicInformation, MsgPumpedLiquid
+      , MsgTechnicalInformation, MsgDesignFeatures, MsgElectricMotorInfo
+      , MsgFlanges, MsgBasicInformationAboutThePumpedLiquid, MsgProcedureStartDate, MsgCompletionDate, MsgResponsibleCustomer
       )
     )
     
@@ -42,10 +44,12 @@ import Model
     , Participant (Participant)
     , SheetId
     , Sheet
-      ( Sheet, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign, sheetQuantity, sheetCustomer
+      ( Sheet, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign
+      , sheetQuantity, sheetCustomer, sheetProcedureStartDate, sheetProcedureEndDate, sheetResponsibleCustomer
       )
     , EntityField
-      ( SheetId, SheetProcedure, ParticipantName, ParticipantId, SheetCustomer)
+      ( SheetId, SheetProcedure, ParticipantName, ParticipantId, SheetCustomer, SheetResponsibleCustomer
+      )
     )
 
 import Settings (widgetFile)
@@ -123,10 +127,11 @@ getSheetEditR sid = do
 getSheetR :: SheetId -> Handler Html
 getSheetR sid = do
     sheet <- runDB $ selectOne $ do
-        x :& c <- from $ table @Sheet
+        x :& c :& r <- from $ table @Sheet
             `innerJoin` table @Participant `on` (\(x :& c) -> x ^. SheetCustomer ==. c ^. ParticipantId)
+            `innerJoin` table @Participant `on` (\(x :& _ :& r) -> x ^. SheetResponsibleCustomer ==. r ^. ParticipantId)
         where_ $ x ^. SheetId ==. val sid
-        return (x,c)
+        return ((x,c),r)
 
     (fw0,et0) <- generateFormPost formSheetDelete
 
@@ -198,6 +203,21 @@ formSheet sheet extra = do
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
         } (sheetProcedure . entityVal <$> sheet)
 
+    (procedureStartDateR,procedureStartDateV) <- mreq dayField FieldSettings
+        { fsLabel = SomeMessage MsgProcedureStartDate
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetProcedureStartDate . entityVal <$> sheet)
+
+    (procedureEndDateR,procedureEndDateV) <- mreq dayField FieldSettings
+        { fsLabel = SomeMessage MsgCompletionDate
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetProcedureEndDate . entityVal <$> sheet)
+    
+    (responsibleCustomerR,responsibleCustomerV) <- mreq (selectField customerOptions) FieldSettings
+        { fsLabel = SomeMessage MsgResponsibleCustomer
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetResponsibleCustomer . entityVal <$> sheet)
+
     (itemR,itemV) <- mreq textField FieldSettings
         { fsLabel = SomeMessage MsgPumpPositionCode
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
@@ -206,7 +226,7 @@ formSheet sheet extra = do
     (dateFillR,dateFillV) <- mreq dayField FieldSettings
         { fsLabel = SomeMessage MsgDateOfFilling
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetDateFill . entityVal <$> sheet) 
+        } (sheetDateFill . entityVal <$> sheet)
 
     (riskSignR,riskSignV) <- mreq checkBoxField FieldSettings
         { fsLabel = SomeMessage MsgRisks
@@ -218,16 +238,12 @@ formSheet sheet extra = do
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
         } (sheetQuantity . entityVal <$> sheet) 
 
-    return ( Sheet <$> customerR <*> procedureR <*> itemR <*> dateFillR <*> riskSignR <*> quantityR
-           , [whamlet|
-                     ^{extra}
-                     ^{md3selectWidget customerV}
-                     ^{md3widget procedureV}
-                     ^{md3widget itemV}
-                     ^{md3widget dateFillV}
-                     ^{md3switchWidget riskSignV}
-                     ^{md3widget quantityV}                     
-                     |]
+    let r = Sheet <$> customerR <*> responsibleCustomerR
+            <*> procedureR <*> procedureStartDateR <*> procedureEndDateR
+            <*> itemR <*> dateFillR <*> riskSignR <*> quantityR
+
+    return ( r
+           , $(widgetFile "data/sheets/form") 
            )
   where
       uniqueProcedureField :: Field Handler Text

@@ -1,4 +1,17 @@
 
+Array.from(
+  document.querySelectorAll('time.day[datetime]')
+).forEach(function (x) {
+  x.textContent = new Date(x.getAttribute('datetime')).toLocaleDateString(
+    navigator.language,
+    { year: 'numeric',
+      month: 'long',
+      weekday: 'long',
+      day: 'numeric'
+    }
+  );
+});
+
 document.getElementById(#{idOverlay}).addEventListener('click', e => {
   document.getElementById(#{idDialogDelete}).close();
 });

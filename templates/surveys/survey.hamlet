@@ -3,25 +3,44 @@
 
 <main.responsive>
     
-  $maybe (Entity _ (Sheet _ procedure item dateFill riskSign quantity), customer) <- sheet
+  $maybe ((Entity _ (Sheet _ _ proc procStart procEnd item dateFill riskSign quantity),cust),respCust) <- survey
     <dl.margin>
     
-      $with Entity _ (Participant name _ _) <- customer
+      $with Entity _ (Participant name _ _) <- cust
         <dt.bold>_{MsgCustomer}
         <dd.small-margin>
           #{name}
         
       <dt.bold>_{MsgProcedureNumber}
       <dd.small-margin>
-        #{procedure}
+        #{proc}
 
       <dt.bold>_{MsgPumpPositionCode}
       <dd.small-margin>
         #{item}
 
+      <dt.bold>_{MsgProcedureStartDate}
+      <dd.small-margin>
+        $with dt <- show procStart
+          <time.day datetime=#{dt}>
+            #{dt}
+
+      <dt.bold>_{MsgCompletionDate}
+      <dd.small-margin>
+        $with dt <- show procEnd
+          <time.day datetime=#{dt}>
+            #{dt}
+    
+      $with Entity _ (Participant name _ _) <- respCust
+        <dt.bold>_{MsgResponsibleCustomer}
+        <dd.small-margin>
+          #{name}
+
       <dt.bold>_{MsgDateOfFilling}
       <dd.small-margin>
-        #{show dateFill}
+        $with dt <- show dateFill
+          <time.day datetime=#{dt}>
+            #{dt}
 
       <dt.bold>_{MsgRisk}
       <dd.small-margin>

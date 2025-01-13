@@ -1,3 +1,17 @@
+ResponsibleCustomer: Ответственный, Заказчик
+CompletionDate: Срок окончания
+ProcedureEndDate: Срок окончания процедуры
+ProcedureStartDate: Срок начала процедуры
+ElectricMotorInfo: Информация об электродвигателе
+BasicInformationAboutTheElectricMotor: Основная информация об электродвигателе
+Flanges: Фланцы
+DesignFeatures: Конструктивные особенности
+DesignFeaturesOfThePump: Конструктивные особенности насоса
+TechnicalInformation: Техническая информация
+PumpedLiquid: Перекачиваемая жидкость
+BasicInformationAboutThePumpedLiquid: Основная информация о перекачиваемой жидкости
+BasicInformation: Основная информация
+ServicePart: Служебная часть
 Customer: Заказчик
 Quantity: Количество
 DateOfFilling: Дата заполнения
