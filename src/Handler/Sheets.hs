@@ -1,6 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Handler.Sheets
   ( getSheetsR, postSheetsR
@@ -11,15 +12,18 @@ module Handler.Sheets
   ) where
 
 
-import Data.Bifunctor (Bifunctor(bimap))
 import Data.Text (Text)
+import Data.Time.Calendar (Day)
 
 import Database.Esqueleto.Experimental
     ( select, from, table, Entity (entityVal), selectOne, where_, val
     , (^.), (==.), (:&)((:&))
-    , orderBy, asc, Value (unValue), innerJoin, on
+    , orderBy, asc, innerJoin, on, Value (unValue)
     )
-import Database.Persist (Entity(Entity), insert_, replace, delete)
+import Database.Persist
+    ( Entity(Entity), insert_, replace, delete, upsertBy
+    , (=.)
+    )
 
 import Foundation
     ( Handler, Form, widgetSnackbar, widgetTopbar
@@ -33,22 +37,27 @@ import Foundation
       , MsgPumpPositionCode, MsgProcedureNumber, MsgDateOfFilling, MsgRisks
       , MsgCustomer, MsgServicePart, MsgBasicInformation, MsgPumpedLiquid
       , MsgTechnicalInformation, MsgDesignFeatures, MsgElectricMotorInfo
-      , MsgFlanges, MsgBasicInformationAboutThePumpedLiquid, MsgProcedureStartDate, MsgCompletionDate, MsgResponsibleCustomer
+      , MsgBasicInformationAboutThePumpedLiquid, MsgProcedureStartDate
+      , MsgCompletionDate, MsgResponsibleCustomer, MsgCustomerPhone
+      , MsgCustomerEmail, MsgResponsibleExecutor, MsgResponsibleFilling
+      , MsgFlanges
       )
     )
     
-import Material3 (md3widget, md3switchWidget, md3selectWidget)
+import Material3 (md3widget, md3switchWidget)
 
 import Model
     ( msgSuccess, msgError
-    , Participant (Participant)
-    , SheetId
+    , Participant (Participant, participantName, participantPhone, participantEmail)
+    , SheetId, Unique (UniqueParticipant)
     , Sheet
       ( Sheet, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign
-      , sheetQuantity, sheetCustomer, sheetProcedureStartDate, sheetProcedureEndDate, sheetResponsibleCustomer
+      , sheetQuantity, sheetCustomer, sheetProcedureStartDate, sheetProcedureEndDate
+      , sheetResponsibleCustomer, sheetResponsibleExecutor, sheetResponsibleFilling
       )
     , EntityField
-      ( SheetId, SheetProcedure, ParticipantName, ParticipantId, SheetCustomer, SheetResponsibleCustomer
+      ( SheetId, SheetProcedure, ParticipantName, ParticipantId, SheetCustomer
+      , SheetResponsibleCustomer, ParticipantPhone, ParticipantEmail
       )
     )
 
@@ -62,9 +71,10 @@ import Yesod.Core
     , redirect
     )
 import Yesod.Form.Fields
-    ( textField, dayField, doubleField, checkBoxField, selectField, optionsPairs
+    ( textField, dayField, doubleField, checkBoxField
+    , emailField
     )
-import Yesod.Form.Functions (mreq, checkM, generateFormPost, runFormPost)
+import Yesod.Form.Functions (mreq, checkM, generateFormPost, runFormPost, mopt)
 import Yesod.Form.Types
     ( FieldSettings(FieldSettings, fsLabel, fsId, fsName, fsTooltip, fsAttrs)
     , Field, FormResult (FormSuccess)
@@ -87,15 +97,42 @@ postSheetDeleR sid = do
 
 postSheetR :: SheetId -> Handler Html
 postSheetR sid = do
-    typ <- runDB $ selectOne $ do
-        x <- from $ table @Sheet
+    sheet <- runDB $ selectOne $ do
+        x :& c :& r <- from $ table @Sheet
+            `innerJoin` table @Participant `on` (\(x :& c) -> x ^. SheetCustomer ==. c ^. ParticipantId)
+            `innerJoin` table @Participant `on` (\(x :& _ :& r) -> x ^. SheetResponsibleCustomer ==. r ^. ParticipantId)
         where_ $ x ^. SheetId ==. val sid
-        return x
+        return (x,(c,r))
     
-    ((fr,fw),et) <- runFormPost $ formSheet typ
+    ((fr,fw),et) <- runFormPost $ formSheet sheet
     case fr of
-      FormSuccess r -> do
-          runDB $ replace sid r
+      FormSuccess s -> do
+          Entity cid _ <- runDB $ upsertBy (UniqueParticipant (surveyCustomerName s))
+              Participant { participantName = surveyCustomerName s
+                          , participantPhone = surveyCustomerPhone s
+                          , participantEmail = surveyCustomerEmail s
+                          }
+              [ ParticipantPhone =. surveyCustomerPhone s
+              , ParticipantEmail =. surveyCustomerEmail s
+              ]
+          Entity rid _ <- runDB $ upsertBy (UniqueParticipant (surveyRresponsibleCustomer s))
+              Participant { participantName = surveyRresponsibleCustomer s
+                          , participantPhone = Nothing
+                          , participantEmail = Nothing
+                          }
+              []
+          runDB $ replace sid Sheet { sheetCustomer = cid
+                                    , sheetResponsibleCustomer = rid
+                                    , sheetResponsibleExecutor = surveyResponsibleExecutor s
+                                    , sheetResponsibleFilling = surveyResponsibleFilling s
+                                    , sheetProcedure = surveyProcedure s
+                                    , sheetProcedureStartDate = surveyProcedureStartDate s
+                                    , sheetProcedureEndDate = surveyProcedureEndDate s
+                                    , sheetItem = surveyItem s
+                                    , sheetDateFill = surveyDateFill s
+                                    , sheetRiskSign = surveyRiskSign s
+                                    , sheetQuantity = surveyQuantity s
+                                    }
           addMessageI msgSuccess MsgRecordEdited
           redirect $ DataR $ SheetR sid
       _otherwise -> do
@@ -110,9 +147,11 @@ postSheetR sid = do
 getSheetEditR :: SheetId -> Handler Html
 getSheetEditR sid = do
     sheet <- runDB $ selectOne $ do
-        x <- from $ table @Sheet
+        x :& c :& r <- from $ table @Sheet
+            `innerJoin` table @Participant `on` (\(x :& c) -> x ^. SheetCustomer ==. c ^. ParticipantId)
+            `innerJoin` table @Participant `on` (\(x :& _ :& r) -> x ^. SheetResponsibleCustomer ==. r ^. ParticipantId)
         where_ $ x ^. SheetId ==. val sid
-        return x
+        return (x,(c,r))
     
     (fw,et) <- generateFormPost $ formSheet sheet
 
@@ -131,7 +170,7 @@ getSheetR sid = do
             `innerJoin` table @Participant `on` (\(x :& c) -> x ^. SheetCustomer ==. c ^. ParticipantId)
             `innerJoin` table @Participant `on` (\(x :& _ :& r) -> x ^. SheetResponsibleCustomer ==. r ^. ParticipantId)
         where_ $ x ^. SheetId ==. val sid
-        return ((x,c),r)
+        return (x,(c,r))
 
     (fw0,et0) <- generateFormPost formSheetDelete
 
@@ -148,8 +187,33 @@ postSheetsR :: Handler Html
 postSheetsR = do
     ((fr,fw),et) <- runFormPost $ formSheet Nothing
     case fr of
-      FormSuccess r -> do
-          runDB $ insert_ r
+      FormSuccess s -> do
+          Entity cid _ <- runDB $ upsertBy (UniqueParticipant (surveyCustomerName s))
+              Participant { participantName = surveyCustomerName s
+                          , participantPhone = surveyCustomerPhone s
+                          , participantEmail = surveyCustomerEmail s
+                          }
+              [ ParticipantPhone =. surveyCustomerPhone s
+              , ParticipantEmail =. surveyCustomerEmail s
+              ]
+          Entity rid _ <- runDB $ upsertBy (UniqueParticipant (surveyRresponsibleCustomer s))
+              Participant { participantName = surveyRresponsibleCustomer s
+                          , participantPhone = Nothing
+                          , participantEmail = Nothing
+                          }
+              []
+          runDB $ insert_ Sheet { sheetCustomer = cid
+                                , sheetResponsibleCustomer = rid
+                                , sheetResponsibleExecutor = surveyResponsibleExecutor s
+                                , sheetResponsibleFilling = surveyResponsibleFilling s
+                                , sheetProcedure = surveyProcedure s
+                                , sheetProcedureStartDate = surveyProcedureStartDate s
+                                , sheetProcedureEndDate = surveyProcedureEndDate s
+                                , sheetItem = surveyItem s
+                                , sheetDateFill = surveyDateFill s
+                                , sheetRiskSign = surveyRiskSign s
+                                , sheetQuantity = surveyQuantity s
+                                }
           addMessageI msgSuccess MsgRecordAdded
           redirect $ DataR SheetsR
       _otherwise -> do
@@ -184,61 +248,107 @@ getSheetsR = do
         idOverlay <- newIdent
         $(widgetFile "data/sheets/sheets")
 
+data Survey = Survey
+    { surveyCustomerName :: Text
+    , surveyCustomerPhone :: Maybe Text
+    , surveyCustomerEmail :: Maybe Text
+    , surveyRresponsibleCustomer :: Text
+    , surveyResponsibleExecutor :: Text
+    , surveyResponsibleFilling :: Text
+    , surveyProcedure :: Text
+    , surveyProcedureStartDate :: Day
+    , surveyProcedureEndDate :: Day
+    , surveyItem :: Text
+    , surveyDateFill :: Day
+    , surveyRiskSign :: Bool
+    , surveyQuantity :: Double
+    }
 
-formSheet :: Maybe (Entity Sheet) -> Form Sheet
+type Customer = Participant
+
+type ResponsibleCustomer = Participant
+
+formSheet :: Maybe (Entity Sheet, (Entity Customer,Entity ResponsibleCustomer))
+          -> Form Survey
 formSheet sheet extra = do
 
-    customerOptions <- liftHandler $ optionsPairs . (bimap unValue unValue <$>) <$> runDB ( select $ do
+    classDetails <- newIdent
+    idCustomerList <- newIdent
+
+    customers <- liftHandler $ (unValue <$>) <$> runDB ( select $ do
         x <- from $ table @Participant
         orderBy [asc (x ^. ParticipantName), asc (x ^. ParticipantId)]
-        return (x ^. ParticipantName, x ^. ParticipantId) )
+        return $ x ^. ParticipantName )
     
-    (customerR,customerV) <- mreq (selectField customerOptions) FieldSettings
+    (customerNameR,customerNameV) <- mreq textField FieldSettings
         { fsLabel = SomeMessage MsgCustomer
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing
+        , fsAttrs = [("list", idCustomerList)]
+        } (participantName . entityVal . fst . snd <$> sheet)
+
+    (customerPhoneR,customerPhoneV) <- mopt textField FieldSettings
+        { fsLabel = SomeMessage MsgCustomerPhone
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetCustomer . entityVal <$> sheet)
+        } (participantPhone . entityVal . fst . snd <$> sheet)
+
+    (customerEmailR,customerEmailV) <- mopt emailField FieldSettings
+        { fsLabel = SomeMessage MsgCustomerEmail
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (participantEmail . entityVal . fst . snd <$> sheet)
+
+    (responsibleExecutorR,responsibleExecutorV) <- mreq textField FieldSettings
+        { fsLabel = SomeMessage MsgResponsibleExecutor
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetResponsibleExecutor . entityVal . fst <$> sheet)
+
+    (fillingRresponsibleR,fillingRresponsibleV) <- mreq textField FieldSettings
+        { fsLabel = SomeMessage MsgResponsibleFilling
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetResponsibleFilling . entityVal . fst <$> sheet)
 
     (procedureR,procedureV) <- mreq uniqueProcedureField FieldSettings
         { fsLabel = SomeMessage MsgProcedureNumber
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetProcedure . entityVal <$> sheet)
+        } (sheetProcedure . entityVal . fst <$> sheet)
 
     (procedureStartDateR,procedureStartDateV) <- mreq dayField FieldSettings
         { fsLabel = SomeMessage MsgProcedureStartDate
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetProcedureStartDate . entityVal <$> sheet)
+        } (sheetProcedureStartDate . entityVal . fst <$> sheet)
 
     (procedureEndDateR,procedureEndDateV) <- mreq dayField FieldSettings
         { fsLabel = SomeMessage MsgCompletionDate
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetProcedureEndDate . entityVal <$> sheet)
+        } (sheetProcedureEndDate . entityVal . fst <$> sheet)
     
-    (responsibleCustomerR,responsibleCustomerV) <- mreq (selectField customerOptions) FieldSettings
+    (responsibleCustomerR,responsibleCustomerV) <- mreq textField FieldSettings
         { fsLabel = SomeMessage MsgResponsibleCustomer
-        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetResponsibleCustomer . entityVal <$> sheet)
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing
+        , fsAttrs = [("list", idCustomerList)]
+        } (participantName . entityVal . snd . snd <$> sheet)
 
     (itemR,itemV) <- mreq textField FieldSettings
         { fsLabel = SomeMessage MsgPumpPositionCode
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetItem . entityVal <$> sheet) 
+        } (sheetItem . entityVal . fst <$> sheet)
 
     (dateFillR,dateFillV) <- mreq dayField FieldSettings
         { fsLabel = SomeMessage MsgDateOfFilling
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetDateFill . entityVal <$> sheet)
+        } (sheetDateFill . entityVal . fst <$> sheet)
 
     (riskSignR,riskSignV) <- mreq checkBoxField FieldSettings
         { fsLabel = SomeMessage MsgRisks
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetRiskSign . entityVal <$> sheet) 
+        } (sheetRiskSign . entityVal . fst <$> sheet) 
 
     (quantityR,quantityV) <- mreq doubleField FieldSettings
         { fsLabel = SomeMessage MsgQuantity
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetQuantity . entityVal <$> sheet) 
+        } (sheetQuantity . entityVal . fst <$> sheet) 
 
-    let r = Sheet <$> customerR <*> responsibleCustomerR
+    let r = Survey <$> customerNameR <*> customerPhoneR <*> customerEmailR
+            <*> responsibleCustomerR <*> responsibleExecutorR <*> fillingRresponsibleR
             <*> procedureR <*> procedureStartDateR <*> procedureEndDateR
             <*> itemR <*> dateFillR <*> riskSignR <*> quantityR
 
@@ -259,8 +369,8 @@ formSheet sheet extra = do
             Nothing -> Right name
             Just (Entity sid _) -> case sheet of
               Nothing -> Left MsgAlreadyExists
-              Just (Entity sid' _) | sid == sid' -> Right name
-                                   | otherwise -> Left MsgAlreadyExists
+              Just (Entity sid' _,_) | sid == sid' -> Right name
+                                     | otherwise -> Left MsgAlreadyExists
 
 
 formSheetDelete :: Form ()

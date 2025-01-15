@@ -5,6 +5,8 @@
 Sheet sql=survey_sheet
     customer ParticipantId OnDeleteCascade
     responsibleCustomer ParticipantId OnDeleteCascade
+    responsibleExecutor Text
+    responsibleFilling Text
     procedure Text sql=procedure_number
     procedureStartDate Day
     procedureEndDate Day

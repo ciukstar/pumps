@@ -35,7 +35,8 @@ import Model
     , Participant (Participant, participantName, participantPhone, participantEmail)
     , Sheet
       ( Sheet, sheetCustomer, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign
-      , sheetQuantity, sheetProcedureStartDate, sheetProcedureEndDate, sheetResponsibleCustomer
+      , sheetQuantity, sheetProcedureStartDate, sheetProcedureEndDate
+      , sheetResponsibleCustomer, sheetResponsibleExecutor, sheetResponsibleFilling
       )
     )
     
@@ -44,6 +45,7 @@ import Settings (AppSettings)
 import Text.Hamlet (shamlet)
 
 import Yesod.Auth.Email (saltPass)
+import Data.Maybe (fromMaybe)
 
 
 fillDemoRu :: MonadIO m => AppSettings -> ReaderT SqlBackend m ()
@@ -330,6 +332,8 @@ fillDemoRu _appSettings = do
     
     let sheet1 = Sheet { sheetCustomer = pId1
                        , sheetResponsibleCustomer = pId5
+                       , sheetResponsibleExecutor = participantName participant7
+                       , sheetResponsibleFilling = participantName participant8
                        , sheetProcedure = "PROC-0001"
                        , sheetProcedureStartDate = addDays 1 now
                        , sheetProcedureEndDate = addDays 10 now
@@ -342,6 +346,8 @@ fillDemoRu _appSettings = do
     
     let sheet2 = Sheet { sheetCustomer = pId2
                        , sheetResponsibleCustomer = pId6
+                       , sheetResponsibleExecutor = participantName participant7
+                       , sheetResponsibleFilling = participantName participant8
                        , sheetProcedure = "PROC-0002"
                        , sheetProcedureStartDate = addDays 2 now
                        , sheetProcedureEndDate = addDays 10 now

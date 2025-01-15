@@ -1,3 +1,7 @@
+ResponsibleFilling: Ответственный, Заполнение
+ResponsibleExecutor: Ответсвенный, Исполнитель
+CustomerEmail: E-mail заказчика
+CustomerPhone: Телефон заказчика
 ResponsibleCustomer: Ответственный, Заказчик
 CompletionDate: Срок окончания
 ProcedureEndDate: Срок окончания процедуры

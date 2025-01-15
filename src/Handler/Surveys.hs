@@ -21,6 +21,8 @@ import Foundation
       , MsgSurveySheet, MsgPumpPositionCode, MsgProcedureNumber, MsgNo
       , MsgQuantity, MsgDateOfFilling, MsgCustomer, MsgRisk, MsgYes
       , MsgProcedureStartDate, MsgCompletionDate, MsgResponsibleCustomer
+      , MsgCustomerPhone, MsgCustomerEmail
+      , MsgResponsibleExecutor, MsgResponsibleFilling
       )
     )
 
@@ -28,7 +30,9 @@ import Model
     ( Participant (Participant)
     , SheetId
     , Sheet
-      ( Sheet
+      ( Sheet, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign
+      , sheetQuantity, sheetProcedureStartDate, sheetProcedureEndDate
+      , sheetResponsibleExecutor, sheetResponsibleFilling
       )
     , EntityField
       ( SheetId, ParticipantId, SheetCustomer, SheetResponsibleCustomer)
@@ -51,7 +55,7 @@ getSurveyR sid = do
             `innerJoin` table @Participant `on` (\(x :& c) -> x ^. SheetCustomer ==. c ^. ParticipantId)
             `innerJoin` table @Participant `on` (\(x :& _ :& r) -> x ^. SheetResponsibleCustomer ==. r ^. ParticipantId)
         where_ $ x ^. SheetId ==. val sid
-        return ((x,c),r)
+        return (x,(c,r))
 
     msgr <- getMessageRender
     msgs <- getMessages

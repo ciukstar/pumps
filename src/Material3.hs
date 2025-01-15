@@ -52,7 +52,7 @@ md3radioField options = (radioField' options)
 
 md3fileWidget :: RenderMessage m FormMessage => FieldView m -> WidgetFor m ()
 md3fileWidget v = [whamlet|
-  <button.transparent.border>
+  <button.transparent.border.small>
     <i>upload_file
     <span>#{fvLabel v}
     ^{fvInput v}
@@ -64,7 +64,7 @@ md3fileWidget v = [whamlet|
 
 md3switchWidget :: RenderMessage m FormMessage => FieldView m -> WidgetFor m ()
 md3switchWidget v = [whamlet|
-  <div.field.no-margin.middle-align :isJust (fvErrors v):.invalid>
+  <div.field.no-margin.middle-align.small :isJust (fvErrors v):.invalid>
     <nav.no-padding>          
       <label.switch>
         ^{fvInput v}
@@ -78,7 +78,7 @@ md3switchWidget v = [whamlet|
 
 md3checkboxWidget :: RenderMessage m FormMessage => FieldView m -> WidgetFor m ()
 md3checkboxWidget v = [whamlet|
-  <label.checkbox>
+  <label.checkbox.small>
     ^{fvInput v}
     <span>#{fvLabel v}
 |]
@@ -86,7 +86,7 @@ md3checkboxWidget v = [whamlet|
     
 md3textareaWidget :: RenderMessage m FormMessage => FieldView m -> WidgetFor m ()
 md3textareaWidget v = [whamlet|
-  <div.field.border.round.label.textarea :isJust (fvErrors v):.invalid>
+  <div.field.border.round.label.textarea.small :isJust (fvErrors v):.invalid>
     ^{fvInput v}
     <label for=#{fvId v}>
       #{fvLabel v}
@@ -99,7 +99,7 @@ md3textareaWidget v = [whamlet|
     
 md3selectWidget :: RenderMessage m FormMessage => FieldView m -> WidgetFor m ()
 md3selectWidget v = [whamlet|
-  <div.field.label.suffix.border.round :isJust (fvErrors v):.invalid>
+  <div.field.label.suffix.border.round.small :isJust (fvErrors v):.invalid>
     ^{fvInput v}
     <label for=#{fvId v}>
       #{fvLabel v}
@@ -113,7 +113,7 @@ md3selectWidget v = [whamlet|
 
 md3widget :: RenderMessage m FormMessage => FieldView m -> WidgetFor m ()
 md3widget v = [whamlet|
-  <div.field.label.border.round :isJust (fvErrors v):.invalid>
+  <div.field.label.border.round.small :isJust (fvErrors v):.invalid>
 
     ^{fvInput v}
     <label for=#{fvId v}>

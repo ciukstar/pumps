@@ -14,38 +14,57 @@
     
     
   <div.page.padding.active>
-    $maybe ((Entity _ (Sheet _ _ proc procStart procEnd item _df _rs _q),cust),respCust) <- sheet
+    $maybe (Entity _ survey, (customer, responsibleCustomer)) <- sheet
       <dl.margin>
 
-        $with Entity _ (Participant name _ _) <- cust
+        $with Entity _ (Participant name _ _) <- customer
           <dt.bold>_{MsgCustomer}
           <dd.small-margin>
             #{name}
 
         <dt.bold>_{MsgProcedureNumber}
         <dd.small-margin>
-          #{proc}
+          #{sheetProcedure survey}
 
         <dt.bold>_{MsgPumpPositionCode}
         <dd.small-margin>
-          #{item}
+          #{sheetItem survey}
 
         <dt.bold>_{MsgProcedureStartDate}
         <dd.small-margin>
-          $with dt <- show procStart
+          $with dt <- show $ sheetProcedureStartDate survey
             <time.day datetime=#{dt}>
               #{dt}
 
         <dt.bold>_{MsgCompletionDate}
         <dd.small-margin>
-          $with dt <- show procEnd
+          $with dt <- show $ sheetProcedureEndDate survey
             <time.day datetime=#{dt}>
               #{dt}
 
-        $with Entity _ (Participant name _ _) <- respCust
+        $with Entity _ (Participant name _ _) <- responsibleCustomer
           <dt.bold>_{MsgResponsibleCustomer}
           <dd.small-margin>
             #{name}
+            
+        $with Entity _ (Participant _ phone email) <- customer
+          <dt.bold>_{MsgCustomerPhone}
+          <dd.small-margin>
+            $maybe phone <- phone
+              #{phone}
+
+          <dt.bold>_{MsgCustomerEmail}
+          <dd.small-margin>
+            $maybe email <- email
+              #{email}
+
+        <dt.bold>_{MsgResponsibleExecutor}
+        <dd.small-margin>
+          #{sheetResponsibleExecutor survey}
+
+        <dt.bold>_{MsgResponsibleFilling}
+        <dd.small-margin>
+          #{sheetResponsibleFilling survey}
 
   ^{widgetSnackbar msgs}
 

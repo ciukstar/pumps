@@ -1,0 +1,8 @@
+
+Array.from(
+  document.querySelectorAll('.' + #{classDetails})
+).forEach(x => {
+  x.addEventListener('toggle', function (e) {
+    x.querySelector('summary i').textContent = x.open ? 'expand_less' : 'expand_more';
+  });
+});

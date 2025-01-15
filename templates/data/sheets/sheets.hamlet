@@ -8,7 +8,7 @@
       <figcaption>
         _{MsgNoDataYet}.
   $else
-    $forall Entity sid (Sheet _ _ proc _ _ item dateFill _ _) <- sheets
+    $forall Entity sid (Sheet _ _ _ _ proc _ _ item dateFill _ _) <- sheets
       <a.row.padding.wave href=@{DataR $ SheetR sid}>
 
         <div.content.max>

@@ -1,3 +1,7 @@
+ResponsibleFilling: Responsible filling
+ResponsibleExecutor: Responsible executor
+CustomerEmail: Customer Email
+CustomerPhone: Customer phone
 ResponsibleCustomer: Responsible customer
 CompletionDate: Completion date
 ProcedureEndDate: Procedure end date

@@ -10,6 +10,7 @@ import Control.Monad.Trans.Reader (ReaderT)
 import qualified Data.ByteString as BS
 import Data.Time.Calendar (addDays)
 import Data.Time.Clock (getCurrentTime, UTCTime (utctDay))
+import Data.Maybe (fromMaybe)
 
 import Database.Persist (PersistStoreWrite (insert, insert_))
 import Database.Persist.SqlBackend (SqlBackend)
@@ -35,7 +36,8 @@ import Model
     , Participant (Participant, participantName, participantPhone, participantEmail)
     , Sheet
       ( Sheet, sheetCustomer, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign
-      , sheetQuantity, sheetProcedureStartDate, sheetProcedureEndDate, sheetResponsibleCustomer
+      , sheetQuantity, sheetProcedureStartDate, sheetProcedureEndDate
+      , sheetResponsibleCustomer, sheetResponsibleExecutor, sheetResponsibleFilling
       )
     )
     
@@ -328,6 +330,8 @@ fillDemoEn _appSettings = do
     
     let sheet1 = Sheet { sheetCustomer = pId1
                        , sheetResponsibleCustomer = pId5
+                       , sheetResponsibleExecutor = participantName participant7
+                       , sheetResponsibleFilling = participantName participant8
                        , sheetProcedure = "PROC-0001"
                        , sheetProcedureStartDate = addDays 1 now
                        , sheetProcedureEndDate = addDays 10 now
@@ -340,6 +344,8 @@ fillDemoEn _appSettings = do
     
     let sheet2 = Sheet { sheetCustomer = pId2
                        , sheetResponsibleCustomer = pId6
+                       , sheetResponsibleExecutor = participantName participant7
+                       , sheetResponsibleFilling = participantName participant8
                        , sheetProcedure = "PROC-0002"
                        , sheetItem = "SA-01"
                        , sheetDateFill = now
