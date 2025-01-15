@@ -2,74 +2,122 @@
 ^{widgetTopbar (Just (SurveysR,[])) (msgr MsgSurveySheet) idOverlay Nothing Nothing}
 
 <main.responsive>
-    
-  $maybe (Entity _ sheet,(customer,responsibleCustomer)) <- survey
-    <dl.margin>
-    
-      $with Entity _ (Participant name _ _) <- customer
-        <dt.bold>_{MsgCustomer}
+  
+  $maybe (Entity _ sheet,((customer,rCustomer),(pType,(pOrient,(pClass,(pLayout,(standard,loc))))))) <- survey
+    <details.#{classDetails}>
+      <summary.none>
+        <article.round.primary.no-elevate.wave>
+          <nav>
+            <div.max>_{MsgServicePart}
+            <i>expand_more
+
+      <dl.margin>
+
+        $with Entity _ (Participant name _ _) <- customer
+          <dt.bold>_{MsgCustomer}
+          <dd.small-margin>
+            #{name}
+
+        <dt.bold>_{MsgProcedureNumber}
         <dd.small-margin>
-          #{name}
-        
-      <dt.bold>_{MsgProcedureNumber}
-      <dd.small-margin>
-        #{sheetProcedure sheet}
+          #{sheetProcedure sheet}
 
-      <dt.bold>_{MsgPumpPositionCode}
-      <dd.small-margin>
-        #{sheetItem sheet}
-
-      <dt.bold>_{MsgProcedureStartDate}
-      <dd.small-margin>
-        $with dt <- show $ sheetProcedureStartDate sheet
-          <time.day datetime=#{dt}>
-            #{dt}
-
-      <dt.bold>_{MsgCompletionDate}
-      <dd.small-margin>
-        $with dt <- show $ sheetProcedureEndDate sheet
-          <time.day datetime=#{dt}>
-            #{dt}
-    
-      $with Entity _ (Participant name _ _) <- responsibleCustomer
-        <dt.bold>_{MsgResponsibleCustomer}
+        <dt.bold>_{MsgPumpPositionCode}
         <dd.small-margin>
-          #{name}
+          #{sheetItem sheet}
 
-      $with Entity _ (Participant _ phone email) <- customer
-        <dt.bold>_{MsgCustomerPhone}
+        <dt.bold>_{MsgProcedureStartDate}
         <dd.small-margin>
-          $maybe phone <- phone
-            #{phone}
+          $with dt <- show $ sheetProcedureStartDate sheet
+            <time.day datetime=#{dt}>
+              #{dt}
 
-        <dt.bold>_{MsgCustomerEmail}
+        <dt.bold>_{MsgCompletionDate}
         <dd.small-margin>
-          $maybe email <- email
-            #{email}
+          $with dt <- show $ sheetProcedureEndDate sheet
+            <time.day datetime=#{dt}>
+              #{dt}
 
-      <dt.bold>_{MsgResponsibleExecutor}
-      <dd.small-margin>
-        #{sheetResponsibleExecutor sheet}
+        $with Entity _ (Participant name _ _) <- rCustomer
+          <dt.bold>_{MsgResponsibleCustomer}
+          <dd.small-margin>
+            #{name}
 
-      <dt.bold>_{MsgResponsibleFilling}
-      <dd.small-margin>
-        #{sheetResponsibleFilling sheet}
+        $with Entity _ (Participant _ phone email) <- customer
+          <dt.bold>_{MsgCustomerPhone}
+          <dd.small-margin>
+            $maybe phone <- phone
+              #{phone}
 
-      <dt.bold>_{MsgDateOfFilling}
-      <dd.small-margin>
-        $with dt <- show $ sheetDateFill sheet
-          <time.day datetime=#{dt}>
-            #{dt}
+          <dt.bold>_{MsgCustomerEmail}
+          <dd.small-margin>
+            $maybe email <- email
+              #{email}
 
-      <dt.bold>_{MsgRisk}
-      <dd.small-margin>
-        $if sheetRiskSign sheet
-          _{MsgYes}
-        $else
-          _{MsgNo}
+        <dt.bold>_{MsgResponsibleExecutor}
+        <dd.small-margin>
+          #{sheetResponsibleExecutor sheet}
 
-      <dt.bold>_{MsgQuantity}
-      <dd.small-margin>
-        #{sheetQuantity sheet}
+        <dt.bold>_{MsgResponsibleFilling}
+        <dd.small-margin>
+          #{sheetResponsibleFilling sheet}
+
+        <dt.bold>_{MsgOfferDate}
+        <dd.small-margin>
+          $with dt <- show $ sheetOfferDate sheet
+            <time.day datetime=#{dt}>
+              #{dt}
+
+        <dt.bold>_{MsgDateOfFilling}
+        <dd.small-margin>
+          $with dt <- show $ sheetDateFill sheet
+            <time.day datetime=#{dt}>
+              #{dt}
+
+
+    <details.top-margin.#{classDetails}>
+      <summary.none>
+        <article.round.primary.no-elevate.wave>
+          <nav>
+            <div.max>_{MsgBasicInformation}
+            <i>expand_more
+
+      <dl.margin>
+
+        <dt.bold>_{MsgPumpType}
+        <dd.small-margin>
+          #{pumpTypeName $ entityVal $ pType}
+
+        <dt.bold>_{MsgPumpOrientation}
+        <dd.small-margin>
+          #{pumpOrientationName $ entityVal $ pOrient}
+
+        <dt.bold>_{MsgPumpClass}
+        <dd.small-margin>
+          #{pumpClassName $ entityVal $ pClass}
+
+        <dt.bold>_{MsgPumpLayout}
+        <dd.small-margin>
+          #{pumpLayoutName $ entityVal $ pLayout}
+
+        <dt.bold>_{MsgManufacturingStandard}
+        <dd.small-margin>
+          #{standardName $ entityVal $ standard}
+
+        <dt.bold>_{MsgLocation}
+        <dd.small-margin>
+          #{locationName $ entityVal $ loc}
+
+        <dt.bold>_{MsgRisk}
+        <dd.small-margin>
+          $if sheetRiskSign sheet
+            _{MsgYes}
+          $else
+            _{MsgNo}
+
+        <dt.bold>_{MsgQuantity}
+        <dd.small-margin>
+          #{sheetQuantity sheet}
+
 
 ^{widgetSnackbar msgs}

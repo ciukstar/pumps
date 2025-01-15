@@ -28,6 +28,10 @@
       <i>diversity_3
       <span>_{MsgParticipants}
 
+    <a href=@{DataR $ SectionsR (Sections [])} :curr == Just (DataR $ SectionsR (Sections [])):.active>
+      <i>segment
+      <span>_{MsgSections}
+
     <a href=@{DataR UnitsR} :curr == Just (DataR UnitsR):.active>
       <i>scale
       <span>_{MsgUnitsOfMeasurement}

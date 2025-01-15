@@ -9,11 +9,6 @@
         <i>expand_more
 
   ^{md3widget customerNameV}
-
-  <datalist ##{idCustomerList}>
-    $forall c <- customers
-      <option>#{c}
-  
   ^{md3widget procedureV}
   ^{md3widget itemV}
   ^{md3widget procedureStartDateV}
@@ -23,10 +18,32 @@
   ^{md3widget customerEmailV}
   ^{md3widget responsibleExecutorV}
   ^{md3widget fillingRresponsibleV}
-  
+  ^{md3widget offerDateV}
+
   ^{md3widget dateFillV}
+
+  <datalist ##{idCustomerList}>
+    $forall c <- customers
+      <option>#{c}
+ 
+
+<details.top-margin.#{classDetails}>
+  <summary.none>
+    <article.round.primary.no-elevate.wave>
+      <nav>
+        <div.max>_{MsgBasicInformation}
+        <i>expand_more
+
+  ^{md3selectWidget pumpTypeV}
+  ^{md3selectWidget pumpOrientationV}
+  ^{md3selectWidget pumpClassV}
+  ^{md3selectWidget pumpLayoutV}
+  ^{md3selectWidget standardV}
+  ^{md3selectWidget locationV}
+  
   ^{md3switchWidget riskSignV}
   ^{md3widget quantityV}
+        
 
 <details.top-margin.#{classDetails}>
   <summary.none>
@@ -34,3 +51,5 @@
       <nav>
         <div.max>_{MsgBasicInformationAboutThePumpedLiquid}
         <i>expand_more
+
+  <div.padding>

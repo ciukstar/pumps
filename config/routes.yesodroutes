@@ -23,6 +23,12 @@
 
 /data DataR:
 
+    /dele/sections/#SectionId/+Sections SectionDeleR POST
+    /edit/sections/#SectionId/+Sections SectionEditR GET
+    /form/sections/new/+Sections        SectionNewR  GET
+    /section/#SectionId/+Sections       SectionR     GET POST
+    /sections/+Sections                 SectionsR    GET POST
+
     /sheets/#SheetId/dele SheetDeleR POST
     /sheets/#SheetId/edit SheetEditR GET
     /sheets/new/form      SheetNewR  GET

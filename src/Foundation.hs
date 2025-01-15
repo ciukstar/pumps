@@ -231,6 +231,12 @@ instance Yesod App where
     isAuthorized (SurveyR _) _ = return Authorized
     isAuthorized SurveysR _ = return Authorized
     
+    isAuthorized (DataR (SectionDeleR _ _)) _ = isAdmin
+    isAuthorized (DataR (SectionEditR _ _)) _ = isAdmin
+    isAuthorized (DataR (SectionNewR _)) _ = isAdmin
+    isAuthorized (DataR (SectionR _ _)) _ = isAdmin
+    isAuthorized (DataR (SectionsR _)) _ = setUltDestCurrent >> isAdmin
+    
     isAuthorized (DataR (SheetDeleR _)) _ = isAdmin
     isAuthorized (DataR (SheetEditR _)) _ = isAdmin
     isAuthorized (DataR SheetNewR) _ = isAdmin

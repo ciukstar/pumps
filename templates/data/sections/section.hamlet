@@ -1,0 +1,37 @@
+
+^{widgetTopbar (Just (DataR $ SectionsR ps,[])) (msgr MsgSection) idOverlay (Just idDialogDelete) (Just $ DataR $ SectionEditR sid ps)}
+
+<main.responsive>
+
+  <div.tabs.min>
+    <a.active href=@{DataR $ SectionR sid ps}>_{MsgDescription}
+    <a href=@{DataR $ SectionsR (Sections (ss <> [sid]))}>_{MsgSubsections}
+
+  <div.page.padding.active>
+    $maybe (Entity _ (Section name _), parent) <- section
+      <dl.margin>
+
+        <dt.bold>_{MsgName}
+        <dd.small-margin>
+          #{name}
+
+        $maybe Entity _ (Section name _) <- parent
+          <dt.bold>_{MsgParentSection}
+          <dd.small-margin>
+            #{name}
+
+  ^{widgetSnackbar msgs}
+
+<div.overlay ##{idOverlay} data-ui=##{idOverlay}>
+
+<dialog ##{idDialogDelete}>
+  <h5>_{MsgConfirmPlease}
+  <div>_{MsgDeleteAreYouSure}
+  <nav.right-align.no-space>
+    <button.transparent.link data-ui=##{idOverlay}
+      onclick="document.getElementById('#{idDialogDelete}').close()">
+      _{MsgCancel}
+    <form method=post action=@{DataR $ SectionDeleR sid ps} enctype=#{et0}>
+      ^{fw0}
+      <button.primary type=submit>
+        _{MsgDele}

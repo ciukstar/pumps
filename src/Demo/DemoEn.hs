@@ -36,9 +36,9 @@ import Model
     , Participant (Participant, participantName, participantPhone, participantEmail)
     , Sheet
       ( Sheet, sheetCustomer, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign
-      , sheetQuantity, sheetProcedureStartDate, sheetProcedureEndDate
-      , sheetResponsibleCustomer, sheetResponsibleExecutor, sheetResponsibleFilling
-      )
+      , sheetQuantity, sheetProcedureStartDate, sheetProcedureEndDate, sheetOfferDate
+      , sheetResponsibleCustomer, sheetResponsibleExecutor, sheetResponsibleFilling, sheetPumpType, sheetPumpOrientation, sheetPumpClass, sheetPumpLayout, sheetStandard, sheetLocation
+      ), Section (Section, sectionName, sectionParent)
     )
     
 import Settings (AppSettings)
@@ -207,7 +207,7 @@ fillDemoEn _appSettings = do
 
 
     let location1 = Location { locationName = "Indoor" }
-    locId6 <- insert location1
+    locId1 <- insert location1
 
     let location2 = Location { locationName = "Under the canopy" }
     locId2 <- insert location2
@@ -327,6 +327,21 @@ fillDemoEn _appSettings = do
                                    , participantEmail = Just "jjbullock@xmail.edu"
                                    }
     pId8 <- insert participant8
+
+    let section1 = Section { sectionName = "Basic Information"
+                           , sectionParent = Nothing
+                           }
+    secId1 <- insert section1
+
+    let section11 = Section { sectionName = "Basic information about the pumped liquid"
+                            , sectionParent = Just secId1
+                            }
+    secId11 <- insert section11
+
+    let section12 = Section { sectionName = "Technical information about the pump"
+                            , sectionParent = Just secId1
+                            }
+    secId12 <- insert section12
     
     let sheet1 = Sheet { sheetCustomer = pId1
                        , sheetResponsibleCustomer = pId5
@@ -335,8 +350,15 @@ fillDemoEn _appSettings = do
                        , sheetProcedure = "PROC-0001"
                        , sheetProcedureStartDate = addDays 1 now
                        , sheetProcedureEndDate = addDays 10 now
+                       , sheetOfferDate = addDays 2 now
                        , sheetItem = "SA-01"
                        , sheetDateFill = now
+                       , sheetPumpType = ptId1
+                       , sheetPumpOrientation = poId1
+                       , sheetPumpClass = pcId1
+                       , sheetPumpLayout = plId1
+                       , sheetStandard = stId1
+                       , sheetLocation = locId1
                        , sheetRiskSign = True
                        , sheetQuantity = 1
                        }
@@ -350,7 +372,14 @@ fillDemoEn _appSettings = do
                        , sheetItem = "SA-01"
                        , sheetDateFill = now
                        , sheetProcedureStartDate = addDays 2 now
+                       , sheetOfferDate = addDays 3 now
                        , sheetProcedureEndDate = addDays 10 now
+                       , sheetPumpType = ptId2
+                       , sheetPumpOrientation = poId2
+                       , sheetPumpClass = pcId2
+                       , sheetPumpLayout = plId2
+                       , sheetStandard = stId2
+                       , sheetLocation = locId2
                        , sheetRiskSign = False
                        , sheetQuantity = 2
                        }

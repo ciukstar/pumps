@@ -1,3 +1,8 @@
+Subsections: Subsections
+ParentSection: Parent section
+Sections: Sections
+Section: Section
+OfferDate: Offer date
 ResponsibleFilling: Responsible filling
 ResponsibleExecutor: Responsible executor
 CustomerEmail: Customer Email

@@ -1,0 +1,32 @@
+
+^{widgetTopbar (Just (DataR $ SectionsR (Sections (init ss)),[])) (msgr MsgSections) idOverlay Nothing Nothing}
+
+<main.responsive.no-padding>
+
+  <div.tabs.min>
+    <a href=@{DataR $ SectionR (last ss)  (Sections (init ss))}>_{MsgDescription}
+    <a.active href=@{DataR $ SectionsR ps}>_{MsgSubsections}
+
+  <div.page.padding.active>
+    $if null sections
+      <figure.margin.pading.center-align>
+        <i.extra>folder_open
+        <figcaption>
+          _{MsgNoDataYet}.
+    $else
+      $forall Entity sid (Section name _) <- sections
+        <a.row.padding.wave href=@{DataR $ SectionR sid ps}>
+
+          <div.content.max>
+            <h6.headline.large-text>
+              #{name}
+
+          <i>arrow_forward_ios
+
+        <hr>
+
+  <a.button.circle.extra.fixed.right.bottom.margin.medium-elevate href=@{DataR $ SectionNewR ps}
+    style="z-index:1" onclick="event.stopPropagation()">
+    <i>add
+
+  ^{widgetSnackbar msgs}

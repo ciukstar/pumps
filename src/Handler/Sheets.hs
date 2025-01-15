@@ -12,6 +12,7 @@ module Handler.Sheets
   ) where
 
 
+import Data.Bifunctor (Bifunctor(bimap))
 import Data.Text (Text)
 import Data.Time.Calendar (Day)
 
@@ -40,30 +41,45 @@ import Foundation
       , MsgBasicInformationAboutThePumpedLiquid, MsgProcedureStartDate
       , MsgCompletionDate, MsgResponsibleCustomer, MsgCustomerPhone
       , MsgCustomerEmail, MsgResponsibleExecutor, MsgResponsibleFilling
-      , MsgFlanges
+      , MsgFlanges, MsgOfferDate, MsgRisk, MsgYes, MsgNo, MsgPumpType
+      , MsgPumpOrientation, MsgPumpClass, MsgManufacturingStandard
+      , MsgPumpLayout, MsgLocation
       )
     )
     
-import Material3 (md3widget, md3switchWidget)
+import Material3 (md3widget, md3switchWidget, md3selectWidget)
 
 import Model
     ( msgSuccess, msgError
     , Participant (Participant, participantName, participantPhone, participantEmail)
+    , PumpTypeId, PumpType (pumpTypeName)
+    , PumpOrientationId, PumpOrientation (pumpOrientationName)
+    , PumpClassId, PumpClass (pumpClassName)
+    , PumpLayoutId, PumpLayout (pumpLayoutName)
+    , StandardId, Standard (standardName)
+    , LocationId, Location (locationName)
     , SheetId, Unique (UniqueParticipant)
     , Sheet
       ( Sheet, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign
       , sheetQuantity, sheetCustomer, sheetProcedureStartDate, sheetProcedureEndDate
       , sheetResponsibleCustomer, sheetResponsibleExecutor, sheetResponsibleFilling
+      , sheetOfferDate, sheetPumpType, sheetPumpOrientation, sheetPumpClass
+      , sheetPumpLayout, sheetStandard, sheetLocation
       )
     , EntityField
       ( SheetId, SheetProcedure, ParticipantName, ParticipantId, SheetCustomer
-      , SheetResponsibleCustomer, ParticipantPhone, ParticipantEmail
+      , SheetResponsibleCustomer, ParticipantPhone, ParticipantEmail, PumpTypeName
+      , PumpTypeId, PumpOrientationName, PumpOrientationId, SheetPumpType
+      , SheetPumpOrientation, PumpClassName, PumpClassId, PumpLayoutId
+      , PumpLayoutName, SheetPumpLayout, SheetPumpClass, StandardName, StandardId
+      , SheetStandard, LocationId, LocationName, SheetLocation
       )
     )
 
 import Settings (widgetFile)
 
 import Text.Hamlet (Html)
+import Text.Julius (rawJS)
 
 import Yesod.Core
     ( Yesod(defaultLayout), setTitleI, newIdent, getMessages, getMessageRender
@@ -72,7 +88,7 @@ import Yesod.Core
     )
 import Yesod.Form.Fields
     ( textField, dayField, doubleField, checkBoxField
-    , emailField
+    , emailField, selectFieldList
     )
 import Yesod.Form.Functions (mreq, checkM, generateFormPost, runFormPost, mopt)
 import Yesod.Form.Types
@@ -128,8 +144,15 @@ postSheetR sid = do
                                     , sheetProcedure = surveyProcedure s
                                     , sheetProcedureStartDate = surveyProcedureStartDate s
                                     , sheetProcedureEndDate = surveyProcedureEndDate s
+                                    , sheetOfferDate = surveyOfferDate s
                                     , sheetItem = surveyItem s
                                     , sheetDateFill = surveyDateFill s
+                                    , sheetPumpType = surveyPumpType s
+                                    , sheetPumpOrientation = surveyPumpOrientation s
+                                    , sheetPumpClass = surveyPumpClass s
+                                    , sheetPumpLayout = surveyPumpLayout s
+                                    , sheetStandard = surveyStandard s
+                                    , sheetLocation = surveyLocation s
                                     , sheetRiskSign = surveyRiskSign s
                                     , sheetQuantity = surveyQuantity s
                                     }
@@ -164,13 +187,27 @@ getSheetEditR sid = do
 
 
 getSheetR :: SheetId -> Handler Html
-getSheetR sid = do
+getSheetR sid = do 
     sheet <- runDB $ selectOne $ do
-        x :& c :& r <- from $ table @Sheet
-            `innerJoin` table @Participant `on` (\(x :& c) -> x ^. SheetCustomer ==. c ^. ParticipantId)
-            `innerJoin` table @Participant `on` (\(x :& _ :& r) -> x ^. SheetResponsibleCustomer ==. r ^. ParticipantId)
-        where_ $ x ^. SheetId ==. val sid
-        return (x,(c,r))
+        x :& c :& r :& t :& o :& k :& l :& s :& loc <- from $ table @Sheet
+            `innerJoin` table @Participant
+                `on` (\(x :& c) -> x ^. SheetCustomer ==. c ^. ParticipantId)
+            `innerJoin` table @Participant
+                `on` (\(x :& _ :& r) -> x ^. SheetResponsibleCustomer ==. r ^. ParticipantId)
+            `innerJoin` table @PumpType
+                `on` (\(x :& _ :& _ :& t) -> x ^. SheetPumpType ==. t ^. PumpTypeId)
+            `innerJoin` table @PumpOrientation
+                `on` (\(x :& _ :& _ :& _ :& o) -> x ^. SheetPumpOrientation ==. o ^. PumpOrientationId)
+            `innerJoin` table @PumpClass
+                `on` (\(x :& _ :& _ :& _ :& _ :& k) -> x ^. SheetPumpClass ==. k ^. PumpClassId)
+            `innerJoin` table @PumpLayout
+                `on` (\(x :& _ :& _ :& _ :& _ :& _ :& l) -> x ^. SheetPumpLayout ==. l ^. PumpLayoutId)
+            `innerJoin` table @Standard
+                `on` (\(x :& _ :& _ :& _ :& _ :& _ :& _ :& s) -> x ^. SheetStandard ==. s ^. StandardId)
+            `innerJoin` table @Location
+                `on` (\(x :& _ :& _ :& _ :& _ :& _ :& _ :& _ :& loc) -> x ^. SheetLocation ==. loc ^. LocationId)
+        where_ $ x ^. SheetId ==. val sid 
+        return (x,((c,r),(t,(o,(k,(l,(s,loc)))))))
 
     (fw0,et0) <- generateFormPost formSheetDelete
 
@@ -180,6 +217,8 @@ getSheetR sid = do
         setTitleI MsgSurveySheet
         idOverlay <- newIdent
         idDialogDelete <- newIdent
+        idServicePart <- newIdent
+        idBasicInformation <- newIdent
         $(widgetFile "data/sheets/sheet")
 
 
@@ -209,8 +248,15 @@ postSheetsR = do
                                 , sheetProcedure = surveyProcedure s
                                 , sheetProcedureStartDate = surveyProcedureStartDate s
                                 , sheetProcedureEndDate = surveyProcedureEndDate s
+                                , sheetOfferDate = surveyOfferDate s
                                 , sheetItem = surveyItem s
                                 , sheetDateFill = surveyDateFill s
+                                , sheetPumpType = surveyPumpType s
+                                , sheetPumpOrientation = surveyPumpOrientation s
+                                , sheetPumpClass = surveyPumpClass s
+                                , sheetPumpLayout = surveyPumpLayout s
+                                , sheetStandard = surveyStandard s
+                                , sheetLocation = surveyLocation s
                                 , sheetRiskSign = surveyRiskSign s
                                 , sheetQuantity = surveyQuantity s
                                 }
@@ -258,8 +304,15 @@ data Survey = Survey
     , surveyProcedure :: Text
     , surveyProcedureStartDate :: Day
     , surveyProcedureEndDate :: Day
+    , surveyOfferDate :: Day
     , surveyItem :: Text
     , surveyDateFill :: Day
+    , surveyPumpType :: PumpTypeId
+    , surveyPumpOrientation :: PumpOrientationId
+    , surveyPumpClass :: PumpClassId
+    , surveyPumpLayout :: PumpLayoutId
+    , surveyStandard :: StandardId
+    , surveyLocation :: LocationId
     , surveyRiskSign :: Bool
     , surveyQuantity :: Double
     }
@@ -327,6 +380,11 @@ formSheet sheet extra = do
         , fsAttrs = [("list", idCustomerList)]
         } (participantName . entityVal . snd . snd <$> sheet)
 
+    (offerDateR,offerDateV) <- mreq dayField FieldSettings
+        { fsLabel = SomeMessage MsgOfferDate
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetOfferDate . entityVal . fst <$> sheet)
+
     (itemR,itemV) <- mreq textField FieldSettings
         { fsLabel = SomeMessage MsgPumpPositionCode
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
@@ -337,6 +395,66 @@ formSheet sheet extra = do
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
         } (sheetDateFill . entityVal . fst <$> sheet)
 
+    pumpTypes <- liftHandler $ (bimap unValue unValue <$>) <$> runDB ( select $ do
+        x <- from $ table @PumpType
+        orderBy [asc (x ^. PumpTypeName), asc (x ^. PumpTypeId)]
+        return (x ^. PumpTypeName, x ^. PumpTypeId) )
+
+    (pumpTypeR,pumpTypeV) <- mreq (selectFieldList pumpTypes) FieldSettings
+        { fsLabel = SomeMessage MsgPumpType
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetPumpType . entityVal . fst <$> sheet)
+
+    pumpOrientations <- liftHandler $ (bimap unValue unValue <$>) <$> runDB ( select $ do
+        x <- from $ table @PumpOrientation
+        orderBy [asc (x ^. PumpOrientationName), asc (x ^. PumpOrientationId)]
+        return (x ^. PumpOrientationName, x ^. PumpOrientationId) )
+
+    (pumpOrientationR,pumpOrientationV) <- mreq (selectFieldList pumpOrientations) FieldSettings
+        { fsLabel = SomeMessage MsgPumpOrientation
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetPumpOrientation . entityVal . fst <$> sheet)
+
+    pumpClasses <- liftHandler $ (bimap unValue unValue <$>) <$> runDB ( select $ do
+        x <- from $ table @PumpClass
+        orderBy [asc (x ^. PumpClassName), asc (x ^. PumpClassId)]
+        return (x ^. PumpClassName, x ^. PumpClassId) )
+
+    (pumpClassR,pumpClassV) <- mreq (selectFieldList pumpClasses) FieldSettings
+        { fsLabel = SomeMessage MsgPumpClass
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetPumpClass . entityVal . fst <$> sheet)
+
+    pumpLayouts <- liftHandler $ (bimap unValue unValue <$>) <$> runDB ( select $ do
+        x <- from $ table @PumpLayout
+        orderBy [asc (x ^. PumpLayoutName), asc (x ^. PumpLayoutId)]
+        return (x ^. PumpLayoutName, x ^. PumpLayoutId) )
+
+    (pumpLayoutR,pumpLayoutV) <- mreq (selectFieldList pumpLayouts) FieldSettings
+        { fsLabel = SomeMessage MsgPumpLayout
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetPumpLayout . entityVal . fst <$> sheet)
+
+    pumpStandards <- liftHandler $ (bimap unValue unValue <$>) <$> runDB ( select $ do
+        x <- from $ table @Standard
+        orderBy [asc (x ^. StandardName), asc (x ^. StandardId)]
+        return (x ^. StandardName, x ^. StandardId) )
+
+    (standardR,standardV) <- mreq (selectFieldList pumpStandards) FieldSettings
+        { fsLabel = SomeMessage MsgManufacturingStandard
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetStandard . entityVal . fst <$> sheet)
+
+    pumpLocations <- liftHandler $ (bimap unValue unValue <$>) <$> runDB ( select $ do
+        x <- from $ table @Location
+        orderBy [asc (x ^. LocationName), asc (x ^. LocationId)]
+        return (x ^. LocationName, x ^. LocationId) )
+
+    (locationR,locationV) <- mreq (selectFieldList pumpLocations) FieldSettings
+        { fsLabel = SomeMessage MsgLocation
+        , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
+        } (sheetLocation . entityVal . fst <$> sheet)
+
     (riskSignR,riskSignV) <- mreq checkBoxField FieldSettings
         { fsLabel = SomeMessage MsgRisks
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
@@ -345,12 +463,20 @@ formSheet sheet extra = do
     (quantityR,quantityV) <- mreq doubleField FieldSettings
         { fsLabel = SomeMessage MsgQuantity
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sheetQuantity . entityVal . fst <$> sheet) 
+        } (sheetQuantity . entityVal . fst <$> sheet)
 
     let r = Survey <$> customerNameR <*> customerPhoneR <*> customerEmailR
             <*> responsibleCustomerR <*> responsibleExecutorR <*> fillingRresponsibleR
             <*> procedureR <*> procedureStartDateR <*> procedureEndDateR
-            <*> itemR <*> dateFillR <*> riskSignR <*> quantityR
+            <*> offerDateR
+            <*> itemR <*> dateFillR
+            <*> pumpTypeR
+            <*> pumpOrientationR
+            <*> pumpClassR
+            <*> pumpLayoutR
+            <*> standardR
+            <*> locationR
+            <*> riskSignR <*> quantityR
 
     return ( r
            , $(widgetFile "data/sheets/form") 

@@ -4,17 +4,17 @@
 <main.responsive>
 
   <div.tabs.min.scroll>
-    <a.active href=@{DataR SheetsR}>_{MsgServicePart}
-    <a href=#>_{MsgBasicInformation}
+    <a.active data-ui=##{idServicePart}>_{MsgServicePart}
+    <a data-ui=##{idBasicInformation}>_{MsgBasicInformation}
     <a href=#>_{MsgPumpedLiquid}
     <a href=#>_{MsgTechnicalInformation}
     <a href=#>_{MsgDesignFeatures}
     <a href=#>_{MsgFlanges}
     <a href=#>_{MsgElectricMotorInfo}
     
-    
-  <div.page.padding.active>
-    $maybe (Entity _ survey, (customer, responsibleCustomer)) <- sheet
+  
+  $maybe (Entity _ survey, ((customer, rCustomer), (pType,(pOrient,(pClass,(pLayout,(standard,loc))))))) <- sheet
+    <div.page.padding.active ##{idServicePart}>
       <dl.margin>
 
         $with Entity _ (Participant name _ _) <- customer
@@ -42,11 +42,11 @@
             <time.day datetime=#{dt}>
               #{dt}
 
-        $with Entity _ (Participant name _ _) <- responsibleCustomer
+        $with Entity _ (Participant name _ _) <- rCustomer
           <dt.bold>_{MsgResponsibleCustomer}
           <dd.small-margin>
             #{name}
-            
+
         $with Entity _ (Participant _ phone email) <- customer
           <dt.bold>_{MsgCustomerPhone}
           <dd.small-margin>
@@ -65,6 +65,50 @@
         <dt.bold>_{MsgResponsibleFilling}
         <dd.small-margin>
           #{sheetResponsibleFilling survey}
+
+        <dt.bold>_{MsgOfferDate}
+        <dd.small-margin>
+          $with dt <- show $ sheetOfferDate survey
+            <time.day datetime=#{dt}>
+              #{dt}
+
+    <div.page.padding.active ##{idBasicInformation}>
+      <dl.margin>
+
+        <dt.bold>_{MsgPumpType}
+        <dd.small-margin>
+          #{pumpTypeName $ entityVal $ pType}
+
+        <dt.bold>_{MsgPumpOrientation}
+        <dd.small-margin>
+          #{pumpOrientationName $ entityVal $ pOrient}
+
+        <dt.bold>_{MsgPumpClass}
+        <dd.small-margin>
+          #{pumpClassName $ entityVal $ pClass}
+
+        <dt.bold>_{MsgPumpLayout}
+        <dd.small-margin>
+          #{pumpLayoutName $ entityVal $ pLayout}
+
+        <dt.bold>_{MsgManufacturingStandard}
+        <dd.small-margin>
+          #{standardName $ entityVal $ standard}
+
+        <dt.bold>_{MsgLocation}
+        <dd.small-margin>
+          #{locationName $ entityVal $ loc}
+
+        <dt.bold>_{MsgRisk}
+        <dd.small-margin>
+          $if sheetRiskSign survey
+            _{MsgYes}
+          $else
+            _{MsgNo}
+
+        <dt.bold>_{MsgQuantity}
+        <dd.small-margin>
+          #{sheetQuantity survey}
 
   ^{widgetSnackbar msgs}
 

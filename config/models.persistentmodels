@@ -10,8 +10,15 @@ Sheet sql=survey_sheet
     procedure Text sql=procedure_number
     procedureStartDate Day
     procedureEndDate Day
+    offerDate Day
     item Text sql=pump_item_code
     dateFill Day
+    pumpType PumpTypeId OnDeleteCascade
+    pumpOrientation PumpOrientationId OnDeleteCascade
+    pumpClass PumpClassId OnDeleteCascade
+    pumpLayout PumpLayoutId OnDeleteCascade
+    standard StandardId OnDeleteCascade
+    location LocationId OnDeleteCascade
     riskSign Bool
     quantity Double
 
@@ -21,6 +28,12 @@ Participant
     phone Text Maybe
     email Text Maybe
     UniqueParticipant name
+
+
+Section
+    name Text
+    parent SectionId Maybe OnDeleteSetNull
+    UniqueSection name
 
 Unit
     name Text

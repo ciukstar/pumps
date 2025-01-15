@@ -8,18 +8,18 @@
       <figcaption>
         _{MsgNoDataYet}.
   $else
-    $forall Entity sid (Sheet _ _ _ _ proc _ _ item dateFill _ _) <- sheets
+    $forall Entity sid survey <- sheets
       <a.row.padding.wave href=@{SurveyR sid}>
 
         <div.content.max>
           <h6.headline.large-text>
-            #{proc}
+            #{sheetProcedure survey}
             
           <div.supporting-text.small-text>
-            #{item}
+            #{sheetItem survey}
             
           <div.supporting-text.small-text>
-            $with dt <- show dateFill
+            $with dt <- show $ sheetDateFill survey
               <time.day datetime=#{dt}>
                 #{dt}
 

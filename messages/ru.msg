@@ -1,3 +1,8 @@
+Subsections: Подразделы
+ParentSection: Родительский раздел
+Sections: Разделы
+Section: Раздел
+OfferDate: Предложение, дата
 ResponsibleFilling: Ответственный, Заполнение
 ResponsibleExecutor: Ответсвенный, Исполнитель
 CustomerEmail: E-mail заказчика
@@ -12,6 +17,7 @@ Flanges: Фланцы
 DesignFeatures: Конструктивные особенности
 DesignFeaturesOfThePump: Конструктивные особенности насоса
 TechnicalInformation: Техническая информация
+TechnicalInformationAboutThePump: Техническая информация о насосе
 PumpedLiquid: Перекачиваемая жидкость
 BasicInformationAboutThePumpedLiquid: Основная информация о перекачиваемой жидкости
 BasicInformation: Основная информация

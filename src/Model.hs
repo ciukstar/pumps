@@ -23,9 +23,11 @@ import ClassyPrelude.Yesod
     , share, sqlSettings
     )
 
-import Control.Applicative (pure) 
+import Control.Applicative (pure)
+import Control.Monad (mapM)
 
 import Data.Aeson (ToJSON, toJSON, FromJSON, parseJSON)
+import qualified Data.Aeson as A (Value (String, Bool))
 import Data.Aeson.Types (Parser)
 import Data.Bool (Bool)
 import Data.ByteString (ByteString)
@@ -34,10 +36,12 @@ import Data.Eq (Eq)
 import Data.Int (Int)
 import Data.Fixed (Fixed (MkFixed))
 import Data.Function ((.))
+import Data.Functor ((<$>))
 import Data.Maybe (Maybe (Just))
 import Data.Ord (Ord)
 import qualified Data.Proxy as DP (Proxy)
 import Data.Text (pack, unpack) 
+import Data.Text.Lazy (toStrict)
 import Data.Time.Calendar (Day)
 import Data.Time.Calendar.Month (Month)
 import Data.Time.Clock
@@ -47,7 +51,7 @@ import Database.Esqueleto.Experimental (SqlString)
 import Database.Persist
     ( PersistField, PersistValue (PersistInt64), toPersistValue, fromPersistValue)
 import Database.Persist.Quasi ( lowerCaseSettings )
-import Database.Persist.Sql (PersistFieldSql, sqlType)
+import Database.Persist.Sql (PersistFieldSql, sqlType, fromSqlKey, toSqlKey)
 import Database.Persist.TH (derivePersistField)
 import Database.Persist.Types (SqlType (SqlInt64))
 
@@ -58,6 +62,8 @@ import GHC.Real ((^))
 
 import Prelude (truncate, undefined, fromIntegral, flip, quotRem, div)
 
+import Text.Blaze.Html ( toHtml )
+import Text.Blaze.Html.Renderer.Text (renderHtml) 
 import Text.Hamlet (Html)
 import Text.Printf (printf)
 import Text.Shakespeare.Text (st)
@@ -65,14 +71,11 @@ import Text.Show (Show, show)
 import Text.Read (Read, readMaybe)
 
 import Yesod.Auth.HashDB (HashDBUser (userPasswordHash, setPasswordHash))
-import Yesod.Core.Dispatch (PathPiece, toPathPiece, fromPathPiece)
+import Yesod.Core.Dispatch
+    ( PathPiece, toPathPiece, fromPathPiece
+    , PathMultiPiece, toPathMultiPiece, fromPathMultiPiece
+    )
 import Yesod.Form.Fields (Textarea)
-
-import qualified Data.Aeson as A (Value (String, Bool))
-
-import Text.Blaze.Html.Renderer.Text (renderHtml)
-import Text.Blaze.Html ( toHtml ) 
-import Data.Text.Lazy (toStrict)
 
 
 data AuthenticationType = UserAuthTypePassword
@@ -146,6 +149,16 @@ instance PersistFieldSql NominalDiffTime where
 share [mkPersist sqlSettings, mkMigrate "migrateAll"]
     $(persistFileWith lowerCaseSettings "config/models.persistentmodels")
 
+    
+newtype Sections = Sections { unSectors :: [SectionId] }
+    deriving (Show, Read, Eq)
+
+instance PathMultiPiece Sections where
+    toPathMultiPiece :: Sections -> [Text]
+    toPathMultiPiece (Sections xs) = pack . show . fromSqlKey <$> xs
+
+    fromPathMultiPiece :: [Text] -> Maybe Sections
+    fromPathMultiPiece xs = Sections <$> mapM ((toSqlKey <$>) . readMaybe . unpack) xs
 
 
 instance HashDBUser User where

@@ -61,6 +61,14 @@ import Handler.Surveys
   , getSurveyR
   )
   
+import Handler.Sections
+  ( getSectionsR, postSectionsR
+  , getSectionR, postSectionR
+  , getSectionNewR
+  , getSectionEditR
+  , postSectionDeleR
+  )
+  
 import Handler.Sheets
   ( getSheetsR, postSheetsR
   , getSheetR, postSheetR
