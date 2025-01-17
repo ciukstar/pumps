@@ -23,17 +23,23 @@
 
 /data DataR:
 
+    /sheets/#SheetId/dele SheetDeleR POST
+    /sheets/#SheetId/edit SheetEditR GET
+    /sheets/new/form      SheetNewR  GET
+    /sheets/#SheetId      SheetR     GET POST
+    /sheets               SheetsR    GET POST
+
     /dele/sections/#SectionId/+Sections SectionDeleR POST
     /edit/sections/#SectionId/+Sections SectionEditR GET
     /form/sections/new/+Sections        SectionNewR  GET
     /section/#SectionId/+Sections       SectionR     GET POST
     /sections/+Sections                 SectionsR    GET POST
 
-    /sheets/#SheetId/dele SheetDeleR POST
-    /sheets/#SheetId/edit SheetEditR GET
-    /sheets/new/form      SheetNewR  GET
-    /sheets/#SheetId      SheetR     GET POST
-    /sheets               SheetsR    GET POST
+    /params/#ParamId/dele ParamDeleR POST
+    /params/#ParamId/edit ParamEditR GET
+    /params/new/form      ParamNewR  GET
+    /params/#ParamId      ParamR     GET POST
+    /params               ParamsR    GET POST
 
     /participants/#ParticipantId/dele ParticipantDeleR POST
     /participants/#ParticipantId/edit ParticipantEditR GET

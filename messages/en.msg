@@ -1,3 +1,5 @@
+Parameters: Parameters
+Parameter: Parameter
 Subsections: Subsections
 ParentSection: Parent section
 Sections: Sections

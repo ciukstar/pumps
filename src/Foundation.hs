@@ -243,6 +243,12 @@ instance Yesod App where
     isAuthorized (DataR (SheetR _)) _ = isAdmin
     isAuthorized (DataR SheetsR) _ = setUltDestCurrent >> isAdmin
 
+    isAuthorized (DataR (ParamDeleR _)) _ = isAdmin
+    isAuthorized (DataR (ParamEditR _)) _ = isAdmin
+    isAuthorized (DataR ParamNewR) _ = isAdmin
+    isAuthorized (DataR (ParamR _)) _ = isAdmin
+    isAuthorized (DataR ParamsR) _ = setUltDestCurrent >> isAdmin
+
     isAuthorized (DataR (ParticipantDeleR _)) _ = isAdmin
     isAuthorized (DataR (ParticipantEditR _)) _ = isAdmin
     isAuthorized (DataR ParticipantNewR) _ = isAdmin

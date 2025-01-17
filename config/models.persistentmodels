@@ -2,6 +2,19 @@
 -- Syntax for this file here: https://github.com/yesodweb/persistent/blob/master/docs/Persistent-entity-syntax.md
 
 
+TechInfo
+    survey SheetId OnDeleteCascade
+    param ParamId OnDeleteCascade
+    unit UnitId OnDeleteCascade
+    section SectionId OnDeleteCascade
+    value Double
+    
+
+Param
+    name Text
+    UniqueParam name
+
+
 Sheet sql=survey_sheet
     customer ParticipantId OnDeleteCascade
     responsibleCustomer ParticipantId OnDeleteCascade

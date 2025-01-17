@@ -32,6 +32,10 @@
       <i>segment
       <span>_{MsgSections}
 
+    <a href=@{DataR ParamsR} :curr == Just (DataR ParamsR):.active>
+      <i>receipt_long
+      <span>_{MsgParameters}
+
     <a href=@{DataR UnitsR} :curr == Just (DataR UnitsR):.active>
       <i>scale
       <span>_{MsgUnitsOfMeasurement}

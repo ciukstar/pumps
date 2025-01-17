@@ -1,7 +1,7 @@
 
 ^{widgetTopbar (Just (DataR $ SectionsR ps,[])) (msgr MsgSection) idOverlay (Just idDialogDelete) (Just $ DataR $ SectionEditR sid ps)}
 
-<main.responsive>
+<main.responsive.no-padding>
 
   <div.tabs.min>
     <a.active href=@{DataR $ SectionR sid ps}>_{MsgDescription}

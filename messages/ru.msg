@@ -1,3 +1,5 @@
+Parameters: Параметры
+Parameter: Параметр
 Subsections: Подразделы
 ParentSection: Родительский раздел
 Sections: Разделы

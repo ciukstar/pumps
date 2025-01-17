@@ -10,6 +10,8 @@ module Handler.Sections
   , postSectionDeleR
   ) where
 
+import Control.Applicative ((<|>))
+
 import Data.Bifunctor (Bifunctor(bimap))
 import qualified Data.List.Safe as LS (last)
 import Data.Text (Text)
@@ -17,7 +19,7 @@ import Data.Text (Text)
 import Database.Esqueleto.Experimental
     ( select, from, table, Entity (entityVal), selectOne, where_, val
     , (^.), (?.), (==.), (:&)((:&))
-    , orderBy, asc, Value (unValue), leftJoin, on, isNothing_
+    , orderBy, asc, Value (unValue), leftJoin, on, isNothing_, not_
     )
 import Database.Persist (Entity(Entity), insert_, replace, delete)
 
@@ -80,7 +82,7 @@ postSectionR sid ps = do
         where_ $ x ^. SectionId ==. val sid
         return x
     
-    ((fr,fw),et) <- runFormPost $ formSection section
+    ((fr,fw),et) <- runFormPost $ formSection Nothing section
     case fr of
       FormSuccess r -> do
           runDB $ replace sid r
@@ -102,7 +104,7 @@ getSectionEditR sid ps = do
         where_ $ x ^. SectionId ==. val sid
         return x
     
-    (fw,et) <- generateFormPost $ formSection section
+    (fw,et) <- generateFormPost $ formSection Nothing section
 
     msgr <- getMessageRender
     msgs <- getMessages
@@ -133,7 +135,7 @@ getSectionR sid ps@(Sections ss) = do
 
 postSectionsR :: Sections -> Handler Html
 postSectionsR ps = do
-    ((fr,fw),et) <- runFormPost $ formSection Nothing
+    ((fr,fw),et) <- runFormPost $ formSection Nothing Nothing
     case fr of
       FormSuccess r -> do
           runDB $ insert_ r
@@ -150,7 +152,7 @@ postSectionsR ps = do
 
 getSectionNewR :: Sections -> Handler Html
 getSectionNewR ps@(Sections ss) = do
-    (fw,et) <- generateFormPost $ formSection Nothing
+    (fw,et) <- generateFormPost $ formSection (LS.last ss) Nothing
 
     msgr <- getMessageRender
     msgs <- getMessages
@@ -188,8 +190,8 @@ getSectionsR ps@(Sections ss) = do
         $(widgetFile "data/sections/subsections")
 
 
-formSection :: Maybe (Entity Section) -> Form Section
-formSection section extra = do
+formSection :: Maybe SectionId -> Maybe (Entity Section) -> Form Section
+formSection pid section extra = do
 
     (nameR,nameV) <- mreq uniqueNameField FieldSettings
         { fsLabel = SomeMessage MsgName
@@ -198,13 +200,16 @@ formSection section extra = do
 
     sections <- liftHandler $ (bimap unValue unValue <$>) <$> runDB ( select $ do
         x <- from $ table @Section
+        case section of
+          Just (Entity sid _) -> where_ $ not_ $ x ^. SectionId ==. val sid
+          Nothing -> return ()
         orderBy [asc (x ^. SectionName), asc (x ^. SectionId)]
         return (x ^. SectionName, x ^. SectionId) )
 
     (parentR,parentV) <- mopt (selectFieldList sections) FieldSettings
         { fsLabel = SomeMessage MsgParentSection
         , fsId = Nothing, fsName = Nothing, fsTooltip = Nothing, fsAttrs = []
-        } (sectionParent . entityVal <$> section) 
+        } (sectionParent . entityVal <$> section <|> pure pid)
 
     return ( Section <$> nameR <*> parentR
            , [whamlet|

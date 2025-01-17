@@ -76,6 +76,14 @@ import Handler.Sheets
   , getSheetEditR
   , postSheetDeleR
   ) 
+
+import Handler.Params
+  ( getParamsR, postParamsR
+  , getParamR, postParamR
+  , getParamNewR
+  , getParamEditR
+  , postParamDeleR
+  )
     
 import Handler.Participants
   ( getParticipantsR, postParticipantsR

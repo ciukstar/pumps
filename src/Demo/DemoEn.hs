@@ -10,7 +10,6 @@ import Control.Monad.Trans.Reader (ReaderT)
 import qualified Data.ByteString as BS
 import Data.Time.Calendar (addDays)
 import Data.Time.Clock (getCurrentTime, UTCTime (utctDay))
-import Data.Maybe (fromMaybe)
 
 import Database.Persist (PersistStoreWrite (insert, insert_))
 import Database.Persist.SqlBackend (SqlBackend)
@@ -33,12 +32,15 @@ import Model
     , Location (Location, locationName)
     , Risk (Risk, riskName)
     , Unit (Unit, unitName, unitSymbol)
+    , Section (Section, sectionName, sectionParent)
     , Participant (Participant, participantName, participantPhone, participantEmail)
     , Sheet
       ( Sheet, sheetCustomer, sheetProcedure, sheetItem, sheetDateFill, sheetRiskSign
       , sheetQuantity, sheetProcedureStartDate, sheetProcedureEndDate, sheetOfferDate
-      , sheetResponsibleCustomer, sheetResponsibleExecutor, sheetResponsibleFilling, sheetPumpType, sheetPumpOrientation, sheetPumpClass, sheetPumpLayout, sheetStandard, sheetLocation
-      ), Section (Section, sectionName, sectionParent)
+      , sheetResponsibleCustomer, sheetResponsibleExecutor, sheetResponsibleFilling
+      , sheetPumpType, sheetPumpOrientation, sheetPumpClass, sheetPumpLayout
+      , sheetStandard, sheetLocation
+      ), Param (Param, paramName)
     )
     
 import Settings (AppSettings)
@@ -333,15 +335,38 @@ fillDemoEn _appSettings = do
                            }
     secId1 <- insert section1
 
-    let section11 = Section { sectionName = "Basic information about the pumped liquid"
-                            , sectionParent = Just secId1
-                            }
-    secId11 <- insert section11
+    let section2 = Section { sectionName = "Basic information about the pumped liquid"
+                           , sectionParent = Nothing
+                           }
+    secId2 <- insert section2
 
-    let section12 = Section { sectionName = "Technical information about the pump"
-                            , sectionParent = Just secId1
-                            }
-    secId12 <- insert section12
+    let section3 = Section { sectionName = "Technical information about the pump"
+                           , sectionParent = Nothing
+                           }
+    secId3 <- insert section3
+
+    let section4 = Section { sectionName = "Design features of the pump"
+                           , sectionParent = Nothing
+                           }
+    secId4 <- insert section4
+
+    let section5 = Section { sectionName = "Flanges"
+                           , sectionParent = Nothing
+                           }
+    secId5 <- insert section5
+
+    let section6 = Section { sectionName = "Basic information about the electric motor"
+                           , sectionParent = Nothing
+                           }
+    secId6 <- insert section6
+
+    let param1 = Param { paramName = "Max air temperature (˚C)"
+                       }
+    prId1 <- insert param1
+
+    let param2 = Param { paramName = "Min air temperature (˚C)"
+                       }
+    prId2 <- insert param2
     
     let sheet1 = Sheet { sheetCustomer = pId1
                        , sheetResponsibleCustomer = pId5

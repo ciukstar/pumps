@@ -1,5 +1,5 @@
 
-^{widgetTopbar (Just (DataR $ SectionsR (Sections (init ss)),[])) (msgr MsgSections) idOverlay Nothing Nothing}
+^{widgetTopbar (Just (DataR $ SectionsR (Sections (init ss)),[])) (msgr MsgSection) idOverlay Nothing Nothing}
 
 <main.responsive.no-padding>
 
